@@ -58,8 +58,13 @@ var W = {
     
     addBot: function(botClass) {
         var bot = new botClass(this);
+        var be  = bot.getView().getElement();
+        var we  = this.getElement();
+        be.setTop(Math.ceil(Math.random() * we.getBottom()));
+        be.setLeft(Math.ceil(Math.random() * we.getRight()));
+        
         this.bots.push(bot);
-        this.getElement().insert({ top: bot.getView().getElement() });
+        we.insert({ top: be });
     },
     
     addGoal: function(goalClass) {
@@ -129,9 +134,9 @@ A.prototype._canStep = function() {
     var boundary        = ew[ this.direction.first().toGetter() ]();
     
     if(this.direction.last() === -1) {
-        return nextPosition > boundary;
+        return nextPosition > boundary && !this._hasProximalBot(nextPosition);
     } else {
-        return nextPosition < boundary;
+        return nextPosition < boundary && !this._hasProximalBot(nextPosition);
     }
 }
 
@@ -151,7 +156,53 @@ A.prototype._turn = function() {
 }
 
 A.prototype._nextPosition = function(e) {
-    return this.direction.last() * A.STEP + e[ this.direction.first().toGetter() ]()
+    return this.direction.last() * A.STEP + e[ this.direction.first().toGetter() ]();
+}
+
+A.prototype._hasProximalBot = function(nextPosition) {
+    var bots            = this.world.bots;
+    var isNotProximal   = false;
+    var bot             = null;
+    var e2              = this.getView().getElement();
+    
+    var d1 = {
+        top:    null,
+        right:  null,
+        bottom: null,
+        left:   null
+    };
+    
+    var d2 = {
+        top:    e2.getTop(),
+        right:  e2.getRight(),
+        bottom: e2.getBottom(),
+        left:   e2.getLeft()
+    };
+    
+    d2[this.direction.first()] = nextPosition;
+    
+    for(var i=0, n=bots.length; i<n; i++) {
+        bot = bots[i];
+        
+        if(bot === this) continue;
+        
+        e1 = bot.getView().getElement();
+        d1.top      = e1.getTop();
+        d1.right    = e1.getRight();
+        d1.bottom   = e1.getBottom();
+        d1.left     = e1.getLeft();
+        
+        
+        isNotProximal = d1.bottom < d2.top ||
+                        d1.top > d2.bottom ||
+                        d1.right < d2.left ||
+                        d1.left > d2.right;
+                        
+        if(!isNotProximal) {
+            return true;
+        }
+    }
+    return false;
 }
 
 // get the Automaton's view instance.
