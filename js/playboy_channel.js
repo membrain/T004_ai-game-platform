@@ -80,8 +80,8 @@ var W = {
             this.element.setStyle({
                 top:    "0px",
                 left:   "0px",
-                width:  document.viewport.getWidth() + "px",
-                height: document.viewport.getHeight() + "px"
+                width:  document.viewport.getWidth() - 10 + "px",
+                height: document.viewport.getHeight() - 10 + "px"
             });
         }
         return this.element;
