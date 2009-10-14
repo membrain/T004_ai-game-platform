@@ -198,9 +198,7 @@ A.prototype._hasProximalBot = function(nextPosition) {
                         d1.right < d2.left ||
                         d1.left > d2.right;
                         
-        if(!isNotProximal) {
-            return true;
-        }
+        if(!isNotProximal) return true;
     }
     return false;
 }
