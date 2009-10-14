@@ -51,13 +51,13 @@ Element.addMethods();
 /*
     World  --------------------------------------------------------------------
 */
-var W = {
+var World = {
     bots:       [],
     goals:      [],
     element:    null,
     
-    addBot: function(botClass) {
-        var bot = new botClass(this);
+    addBot: function(botClass, num) {
+        var bot = new botClass(this, num);
         var be  = bot.getView().getElement();
         var we  = this.getElement();
         be.setTop(Math.ceil(Math.random() * we.getBottom()));
@@ -91,22 +91,23 @@ var W = {
 /*
     Automaton  ----------------------------------------------------------------
 */
-var A = function(world) {
+var Bot = function(world, id) {
     this.view       = null;
     this.world      = world;
+		this.id         = id;
     this.motor      = setInterval(this._takeTurn.bind(this), 25);
-    this.direction  = A.DIRECTIONS.WEST;
+    this.direction  = Bot.DIRECTIONS.WEST;
 }
 
-A.STEP          = 2;
-A.DIRECTIONS    = {
+Bot.STEP          = 2;
+Bot.DIRECTIONS    = {
     NORTH:  ["top",       -1],
     SOUTH:  ["bottom",     1],
     WEST:   ["left",      -1],
     EAST:   ["right",      1]
 }
 
-A.prototype._takeTurn = function() {
+Bot.prototype._takeTurn = function() {
     if(this._canStep()) {
         this._step();
         
@@ -118,6 +119,15 @@ A.prototype._takeTurn = function() {
         if(i === 0) {
             this._turn();
         }
+				else if (i < 20) {
+					var ea              = this.getView().getElement();
+					var nextPosition    = this._nextPosition(ea);
+				 	if (this._hasProximalBot(nextPosition, 40)) {
+						//alert("number " + this.id + " turning 'cos of a bot!")
+						this._turn();
+					}
+				}
+				
         // ---------------------------------------------------
         // End Silly Hack
         // ---------------------------------------------------
@@ -127,7 +137,7 @@ A.prototype._takeTurn = function() {
     }
 }
 
-A.prototype._canStep = function() {
+Bot.prototype._canStep = function() {
     var ea              = this.getView().getElement();
     var ew              = this.world.getElement();
     var nextPosition    = this._nextPosition(ea);
@@ -140,7 +150,7 @@ A.prototype._canStep = function() {
     }
 }
 
-A.prototype._step = function() {
+Bot.prototype._step = function() {
     var ea              = this.getView().getElement();
     ea[ this.direction.first().toSetter() ](this._nextPosition(ea));
 }
@@ -149,17 +159,21 @@ A.prototype._step = function() {
  * This function is responsible for making the bot turn.  For now, its direction
  * is random.
  */
-A.prototype._turn = function() {
+Bot.prototype._turn = function() {
     var dki = Math.round(Math.random() * 3);
-    var dk  = Object.keys(A.DIRECTIONS)[dki];
-    this.direction = A.DIRECTIONS[dk];
+    var dk  = Object.keys(Bot.DIRECTIONS)[dki];
+    this.direction = Bot.DIRECTIONS[dk];
 }
 
-A.prototype._nextPosition = function(e) {
-    return this.direction.last() * A.STEP + e[ this.direction.first().toGetter() ]();
+Bot.prototype._nextPosition = function(e) {
+    return this.direction.last() * Bot.STEP + e[ this.direction.first().toGetter() ]();
 }
 
-A.prototype._hasProximalBot = function(nextPosition) {
+Bot.prototype._hasProximalBot = function(nextPosition) {
+	this._hasProximalBot(nextPosition, 0)
+}
+
+Bot.prototype._hasProximalBot = function(nextPosition, distance) {
     var bots            = this.world.bots;
     var isNotProximal   = false;
     var bot             = null;
@@ -204,9 +218,9 @@ A.prototype._hasProximalBot = function(nextPosition) {
 }
 
 // get the Automaton's view instance.
-A.prototype.getView = function() {
+Bot.prototype.getView = function() {
     if(!this.view) {
-        this.view = new A.View("bot");
+        this.view = new Bot.View("bot", this.id);
     }
     return this.view
 }
@@ -214,15 +228,17 @@ A.prototype.getView = function() {
 /*
     Automaton View  -----------------------------------------------------------
 */
-A.View = function(styleClass) {
+Bot.View = function(styleClass, ident) {
     this.element    = null;
+		this.id				  = ident;
     this.styleClass = styleClass;
 }
 
 // get the view's DOM element.
-A.View.prototype.getElement = function() {
+Bot.View.prototype.getElement = function() {
     if(!this.element) {
         this.element = new Element("div", { "className": this.styleClass });
+				this.element.appendChild(document.createTextNode(this.id));
     }
     return this.element;
 }
@@ -230,25 +246,25 @@ A.View.prototype.getElement = function() {
 /*
     Goal  ---------------------------------------------------------------------
 */
-var G = function(world) {
+var Goal = function(world) {
     this.world = world;
 }
 
 // get the goal view
-G.prototype.getView = function() {
-    return new G.View("goal");
+Goal.prototype.getView = function() {
+    return new Goal.View("goal");
 }
 
 /*
     Goal View  ----------------------------------------------------------------
 */
-G.View = function(styleClass) {
+Goal.View = function(styleClass) {
     this.element    = null;
     this.styleClass = styleClass;
 }
 
 // get the view's DOM element.
-G.View.prototype.getElement = function() {
+Goal.View.prototype.getElement = function() {
     if(!this.element) {
         this.element = new Element("div", {"className": this.styleClass });
     }
