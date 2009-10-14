@@ -56,8 +56,8 @@ var World = {
     goals:      [],
     element:    null,
     
-    addBot: function(botClass) {
-        var bot = new botClass(this);
+    addBot: function(botClass, num) {
+        var bot = new botClass(this, num);
         var be  = bot.getView().getElement();
         var we  = this.getElement();
         be.setTop(Math.ceil(Math.random() * we.getBottom()));
@@ -91,9 +91,10 @@ var World = {
 /*
     Automaton  ----------------------------------------------------------------
 */
-var Bot = function(world) {
+var Bot = function(world, id) {
     this.view       = null;
     this.world      = world;
+		this.id         = id;
     this.motor      = setInterval(this._takeTurn.bind(this), 25);
     this.direction  = Bot.DIRECTIONS.WEST;
 }
@@ -118,10 +119,11 @@ Bot.prototype._takeTurn = function() {
         if(i === 0) {
             this._turn();
         }
-				else if (i < 2) {
+				else if (i < 20) {
 					var ea              = this.getView().getElement();
 					var nextPosition    = this._nextPosition(ea);
-				 	if (this._hasProximalBot(nextPosition, 10)) {
+				 	if (this._hasProximalBot(nextPosition, 40)) {
+						//alert("number " + this.id + " turning 'cos of a bot!")
 						this._turn();
 					}
 				}
@@ -220,7 +222,7 @@ Bot.prototype._hasProximalBot = function(nextPosition, distance) {
 // get the Automaton's view instance.
 Bot.prototype.getView = function() {
     if(!this.view) {
-        this.view = new Bot.View("bot");
+        this.view = new Bot.View("bot", this.id);
     }
     return this.view
 }
@@ -228,8 +230,9 @@ Bot.prototype.getView = function() {
 /*
     Automaton View  -----------------------------------------------------------
 */
-Bot.View = function(styleClass) {
+Bot.View = function(styleClass, ident) {
     this.element    = null;
+		this.id				  = ident;
     this.styleClass = styleClass;
 }
 
@@ -237,6 +240,7 @@ Bot.View = function(styleClass) {
 Bot.View.prototype.getElement = function() {
     if(!this.element) {
         this.element = new Element("div", { "className": this.styleClass });
+				this.element.appendChild(document.createTextNode(this.id));
     }
     return this.element;
 }
