@@ -49,6 +49,48 @@ Object.extend(Element.Methods, {
 Element.addMethods();
 
 /*
+    Sprite  -------------------------------------------------------------------
+*/
+
+// Constructs a new sprite
+var Sprite = function() {
+    this.viewClass  = null;
+    this.view       = null;
+}
+
+// Returns the view of the sprite
+Sprite.prototype.getView = function() {
+    if(!this.view) {
+        this.view = new this.viewClass();
+    }
+    return this.view;
+}
+
+// Returns the bounding box of the sprite
+Sprite.prototype.getBoundingBox = function() {
+    var element = this.view.getElement();
+    
+    return {
+        top:    element.getTop(),
+        right:  element.getRight(),
+        bottom: element.getBottom(),
+        left:   element.getLeft()
+    }
+}
+
+// Determines whether the sprite's bounding box intersects that of the provided
+// sprite.
+Sprite.prototype.intersects = function(sprite) {
+    thisBoundingBox = this.getBoundingBox();
+    thatBoundingBox = sprite.getBoundingBox();
+    
+    return !(thatBoundingBox.bottom < thisBoundingBox.top ||
+             thatBoundingBox.top > thisBoundingBox.bottom ||
+             thatBoundingBox.right < thisBoundingBox.left ||
+             thatBoundingBox.left > thisBoundingBox.right);
+}
+
+/*
     World  --------------------------------------------------------------------
 */
 var World = {
@@ -56,8 +98,8 @@ var World = {
     goals:      [],
     element:    null,
     
-    addBot: function(botClass, num) {
-        var bot = new botClass(this, num);
+    addBot: function(botClass) {
+        var bot = new botClass(this);
         var be  = bot.getView().getElement();
         var we  = this.getElement();
         be.setTop(Math.ceil(Math.random() * we.getBottom()));
@@ -97,13 +139,15 @@ var World = {
 /*
     Automaton  ----------------------------------------------------------------
 */
-var Bot = function(world, id) {
-    this.view       = null;
+var Bot = function(world) {
+    this.viewClass  = Bot.View;
     this.world      = world;
-		this.id         = id;
     this.motor      = setInterval(this._takeTurn.bind(this), 25);
     this.direction  = Bot.DIRECTIONS.WEST;
 }
+
+// Bot extends Sprite
+Bot.prototype = new Sprite();
 
 Bot.STEP          = 2;
 Bot.DIRECTIONS    = {
@@ -113,6 +157,7 @@ Bot.DIRECTIONS    = {
     EAST:   ["right",      1]
 }
 
+// This function represents a single motor revolution.
 Bot.prototype._takeTurn = function() {
     if (this._metGoal()) {
 	    clearInterval(this.motor);
@@ -129,16 +174,15 @@ Bot.prototype._takeTurn = function() {
         var i = Math.round(Math.random() * 100) % 60;
         if(i === 0) {
             this._turn();
-        }
-				else if (i < 20) {
-					var ea              = this.getView().getElement();
-					var nextPosition    = this._nextPosition(ea);
-				 	if (this._hasProximalBot(nextPosition, 40)) {
-						//alert("number " + this.id + " turning 'cos of a bot!")
-						this._turn();
-					}
-				}
-				
+        } else if (i < 20) {
+			var ea              = this.getView().getElement();
+			var nextPosition    = this._nextPosition(ea);
+		 	if (this._hasProximalBot()) {
+				//alert("number " + this.id + " turning 'cos of a bot!")
+				this._turn();
+			}
+		}
+		
         // ---------------------------------------------------
         // End Silly Hack
         // ---------------------------------------------------
@@ -148,6 +192,7 @@ Bot.prototype._takeTurn = function() {
     }
 }
 
+// Determines whether the bot can take a step
 Bot.prototype._canStep = function() {
     var ea              = this.getView().getElement();
     var ew              = this.world.getElement();
@@ -155,12 +200,13 @@ Bot.prototype._canStep = function() {
     var boundary        = ew[ this.direction.first().toGetter() ]();
     
     if(this.direction.last() === -1) {
-        return nextPosition > boundary && !this._hasProximalBot(nextPosition);
+        return nextPosition > boundary && !this._hasProximalBot();
     } else {
-        return nextPosition < boundary && !this._hasProximalBot(nextPosition);
+        return nextPosition < boundary && !this._hasProximalBot();
     }
 }
 
+// Moves the bot one step in its current direction
 Bot.prototype._step = function() {
     var ea              = this.getView().getElement();
     ea[ this.direction.first().toSetter() ](this._nextPosition(ea));
@@ -176,119 +222,63 @@ Bot.prototype._turn = function() {
     this.direction = Bot.DIRECTIONS[dk];
 }
 
+// Returns the next position in the world this bot will occupy.
 Bot.prototype._nextPosition = function(e) {
     return this.direction.last() * Bot.STEP + e[ this.direction.first().toGetter() ]();
 }
 
-Bot.prototype._hasProximalBot = function(nextPosition, distance) {
-    distance = distance || 0;
-    
+// Determines whether this bot is proximal to any other bots in the world.
+Bot.prototype._hasProximalBot = function() {
     var bots            = this.world.bots;
-    var isNotProximal   = false;
     var bot             = null;
-    var e1              = null;
-    var e2              = this.getView().getElement();
-    
-    var d1 = {
-        top:    null,
-        right:  null,
-        bottom: null,
-        left:   null
-    };
-    
-    var d2 = {
-        top:    e2.getTop(),
-        right:  e2.getRight(),
-        bottom: e2.getBottom(),
-        left:   e2.getLeft()
-    };
-    
-    d2[this.direction.first()] = nextPosition;
     
     for(var i=0, n=bots.length; i<n; i++) {
         bot = bots[i];
         
         if(bot === this) continue;
-        
-        e1 = bot.getView().getElement();
-        d1.top      = e1.getTop();
-        d1.right    = e1.getRight();
-        d1.bottom   = e1.getBottom();
-        d1.left     = e1.getLeft();
-        
-        
-        isNotProximal = d1.bottom < d2.top ||
-                        d1.top > d2.bottom ||
-                        d1.right < d2.left ||
-                        d1.left > d2.right;
-                        
-        if(!isNotProximal) return true;
+        if(this.intersects(bot)) return true;
     }
     return false;
 }
 
+// Determines whether the bot has found the goal
 Bot.prototype._metGoal = function() {
-    var goalMet = false;
     var goals   = this.world.goals;
     var goal    = null;
-    var e1      = null;
-    var e2      = this.getView().getElement();
-    
-    var g = {
-        top:    null,
-        right:  null,
-        bottom: null,
-        left:   null
-    };
-    
-    var b = {
-        top:    e2.getTop(),
-        right:  e2.getRight(),
-        bottom: e2.getBottom(),
-        left:   e2.getLeft()
-    };
     
     for(var i=0, n=goals.length; i<n; i++) {
-        goal = goals[i];
-
-        e1 = goal.getView().getElement();
-        g.top      = e1.getTop();
-        g.right    = e1.getRight();
-        g.bottom   = e1.getBottom();
-        g.left     = e1.getLeft();
-             
-        goalMet = !(g.bottom < b.top ||
-                    g.top > b.bottom ||
-                    g.right < b.left ||
-                    g.left > b.right);
-                        
-        if(goalMet) return true;
+        goal = goals[i];         
+        if(this.intersects(goal)) return true;
     } 
     return false;
 }
 
-// get the Automaton's view instance.
-Bot.prototype.getView = function() {
-    if(!this.view) {
-        this.view = new Bot.View("bot", this.id);
-    }
-    return this.view
+/**
+ * Returns the bounding box of the bot.  This function overrides the basic
+ * getBoundingBox function provided by Sprite to account for the bot's
+ * trajectory.
+ */
+Bot.prototype.getBoundingBox = function() {
+    var box = this.constructor.prototype.getBoundingBox.apply(this);
+    box[this.direction.first()] = this._nextPosition(this.getView().getElement());
+    return box;
 }
 
 /*
     Automaton View  -----------------------------------------------------------
 */
-Bot.View = function(styleClass, ident) {
+Bot.View = function() {
     this.element    = null;
-	this.id				  = ident;
-    this.styleClass = styleClass;
+    this.styleClass = "bot";
 }
+
+Bot.View.ID = 0;
 
 // get the view's DOM element.
 Bot.View.prototype.getElement = function() {
     if(!this.element) {
         this.element = new Element("div", { "className": this.styleClass });
-				this.element.appendChild(document.createTextNode(this.id));
+				this.element.appendChild(document.createTextNode(++Bot.View.ID));
     }
     return this.element;
 }
@@ -297,24 +287,19 @@ Bot.View.prototype.getElement = function() {
     Goal  ---------------------------------------------------------------------
 */
 var Goal = function(world) {
-    this.view  = null;
-    this.world = world;
+    this.viewClass  = Goal.View;
+    this.world      = world;
 }
 
-// get the goal view
-Goal.prototype.getView = function() {
-    if(!this.view) {
-        this.view =  new Goal.View("goal");
-    }
-    return this.view;
-}
+// Goal extends Sprite
+Goal.prototype = new Sprite();
 
 /*
     Goal View  ----------------------------------------------------------------
 */
 Goal.View = function(styleClass) {
     this.element    = null;
-    this.styleClass = styleClass;
+    this.styleClass = "goal";
 }
 
 // get the view's DOM element.
