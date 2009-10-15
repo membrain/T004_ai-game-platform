@@ -68,9 +68,15 @@ var World = {
     },
     
     addGoal: function(goalClass) {
-        var goal = new goalClass(this);
+        var goal    = new goalClass(this);
+        var ge      = goal.getView().getElement();
+        var we      = this.getElement();
+        
+        ge.setTop(200);
+        ge.setLeft(200);
+        
         this.goals.push(goal);
-        this.getElement().insert({ top: goal.getView().getElement() });
+        we.insert({ top: ge });
     },
     
     getElement: function() {
@@ -108,6 +114,11 @@ Bot.DIRECTIONS    = {
 }
 
 Bot.prototype._takeTurn = function() {
+    if (this._metGoal()) {
+	    clearInterval(this.motor);
+	    return;
+	}
+	
     if(this._canStep()) {
         this._step();
         
@@ -169,14 +180,13 @@ Bot.prototype._nextPosition = function(e) {
     return this.direction.last() * Bot.STEP + e[ this.direction.first().toGetter() ]();
 }
 
-Bot.prototype._hasProximalBot = function(nextPosition) {
-	this._hasProximalBot(nextPosition, 0)
-}
-
 Bot.prototype._hasProximalBot = function(nextPosition, distance) {
+    distance = distance || 0;
+    
     var bots            = this.world.bots;
     var isNotProximal   = false;
     var bot             = null;
+    var e1              = null;
     var e2              = this.getView().getElement();
     
     var d1 = {
@@ -217,6 +227,46 @@ Bot.prototype._hasProximalBot = function(nextPosition, distance) {
     return false;
 }
 
+Bot.prototype._metGoal = function() {
+    var goalMet = false;
+    var goals   = this.world.goals;
+    var goal    = null;
+    var e1      = null;
+    var e2      = this.getView().getElement();
+    
+    var g = {
+        top:    null,
+        right:  null,
+        bottom: null,
+        left:   null
+    };
+    
+    var b = {
+        top:    e2.getTop(),
+        right:  e2.getRight(),
+        bottom: e2.getBottom(),
+        left:   e2.getLeft()
+    };
+    
+    for(var i=0, n=goals.length; i<n; i++) {
+        goal = goals[i];
+
+        e1 = goal.getView().getElement();
+        g.top      = e1.getTop();
+        g.right    = e1.getRight();
+        g.bottom   = e1.getBottom();
+        g.left     = e1.getLeft();
+             
+        goalMet = !(g.bottom < b.top ||
+                    g.top > b.bottom ||
+                    g.right < b.left ||
+                    g.left > b.right);
+                        
+        if(goalMet) return true;
+    } 
+    return false;
+}
+
 // get the Automaton's view instance.
 Bot.prototype.getView = function() {
     if(!this.view) {
@@ -230,7 +280,7 @@ Bot.prototype.getView = function() {
 */
 Bot.View = function(styleClass, ident) {
     this.element    = null;
-		this.id				  = ident;
+	this.id				  = ident;
     this.styleClass = styleClass;
 }
 
@@ -247,12 +297,16 @@ Bot.View.prototype.getElement = function() {
     Goal  ---------------------------------------------------------------------
 */
 var Goal = function(world) {
+    this.view  = null;
     this.world = world;
 }
 
 // get the goal view
 Goal.prototype.getView = function() {
-    return new Goal.View("goal");
+    if(!this.view) {
+        this.view =  new Goal.View("goal");
+    }
+    return this.view;
 }
 
 /*
