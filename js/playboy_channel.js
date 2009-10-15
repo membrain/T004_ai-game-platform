@@ -1,4 +1,22 @@
 /*
+    Global-ass shit.
+*/
+forName = function(name) {
+    var branch  = name.split(".");
+    var obj     = window;
+    
+    for(var i=0, n=branch.length; i<n; i++) {
+        if(!obj) {
+            throw new Error("Could not dereference: " + name);
+        }
+        
+        obj = obj[branch[i]];
+    }
+    
+    return obj;
+}
+
+/*
     Core Extensions  ----------------------------------------------------------
 */
 
@@ -53,15 +71,15 @@ Element.addMethods();
 */
 
 // Constructs a new sprite
-var Sprite = function() {
-    this.viewClass  = null;
-    this.view       = null;
+var Sprite = function(viewClassName) {
+    this.viewClassName  = viewClassName;
+    this.view           = null;
 }
 
 // Returns the view of the sprite
 Sprite.prototype.getView = function() {
     if(!this.view) {
-        this.view = new this.viewClass();
+        this.view = new (forName(this.viewClassName))();
     }
     return this.view;
 }
@@ -140,14 +158,13 @@ var World = {
     Automaton  ----------------------------------------------------------------
 */
 var Bot = function(world) {
-    this.viewClass  = Bot.View;
     this.world      = world;
     this.motor      = setInterval(this._takeTurn.bind(this), 25);
     this.direction  = Bot.DIRECTIONS.WEST;
 }
 
 // Bot extends Sprite
-Bot.prototype = new Sprite();
+Bot.prototype = new Sprite("Bot.View");
 
 Bot.STEP          = 2;
 Bot.DIRECTIONS    = {
@@ -287,12 +304,11 @@ Bot.View.prototype.getElement = function() {
     Goal  ---------------------------------------------------------------------
 */
 var Goal = function(world) {
-    this.viewClass  = Goal.View;
     this.world      = world;
 }
 
 // Goal extends Sprite
-Goal.prototype = new Sprite();
+Goal.prototype = new Sprite("Goal.View");
 
 /*
     Goal View  ----------------------------------------------------------------
