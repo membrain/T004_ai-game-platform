@@ -90,9 +90,21 @@ app.ensureNamespace = function(ns) {
  * This function starts the application.
  */
 app.start = function() {
-	var world = new app.component.World();
-	for (var i = 0; i < 10; i++) {
-		world.addBot(app.component.Bot);
+	
+	// create world
+	var world 		= new app.component.World();
+
+	// get convenience references
+	var botClass	= app.component.Bot;
+	var goalClass 	= app.component.Goal;
+	
+	// create goals
+	for (var i = 0; i < 3; i++) {
+		world.addGoal(goalClass);
 	}
-	world.addGoal(app.component.Goal);
+	
+	// create bots
+	for (var i = 0; i < 10; i++) {
+		world.addBot(botClass);
+	}
 };

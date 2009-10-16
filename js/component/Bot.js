@@ -13,23 +13,37 @@ app.component.Bot = function(world) {
 	// set class name
 	this.klassName = "app.component.Bot";
 	
-	// state variables
-	this.world      = world;
-    this.motor      = setInterval(this._takeTurn.bind(this), 25);
-    this.direction  = app.component.Bot.DIRECTIONS.WEST;
+	// set id
+	this.id = ++app.component.Bot._ID;
+	
+	// state variables (common)
+	this._viewClassName = "app.view.Bot";
+	this._world      	= world;
+	
+	// state variables (model-specific)
+    this._motor      	= setInterval(this._takeTurn.bind(this), 25);
+    this._direction  	= app.component.Bot.DIRECTIONS.WEST;
 }
 
 
 /**
- * This class extends app.component.Sprite.
+ * This class extends app.component.AbstractSprite.
  */
-app.component.Bot.prototype = new app.component.Sprite("app.view.Bot");
+app.component.Bot.prototype = new app.component.AbstractSprite();
 
 
 
 // ---------------------------------------------------------------------
 // static
 // ---------------------------------------------------------------------
+
+/**
+ * This is a private property used to identify instances as they are
+ * created.  The offset creates a value that can be used as a keycode.
+ * Keycodes begin with keydown of A.
+ */
+app.component.Bot._ID = 47;
+
 
 /**
  * This defines the distance a bot moves each time it takes a step.
@@ -59,7 +73,7 @@ app.component.Bot.DIRECTIONS = {
  */
 app.component.Bot.prototype._takeTurn = function() {
     if (this._metGoal()) {
-	    clearInterval(this.motor);
+	    clearInterval(this._motor);
 	    return;
 	}
 	
@@ -97,11 +111,11 @@ app.component.Bot.prototype._takeTurn = function() {
  */
 app.component.Bot.prototype._canStep = function() {
     var ea              = this.getView().getElement();
-    var ew              = this.world.getElement();
+    var ew              = this._world.getView().getElement();
     var nextPosition    = this._nextPosition(ea);
-    var boundary        = ew[ this.direction.first().toGetter() ]();
+    var boundary        = ew[ this._direction.first().toGetter() ]();
     
-    if(this.direction.last() === -1) {
+    if(this._direction.last() === -1) {
         return nextPosition > boundary && !this._hasProximalBot();
     } else {
         return nextPosition < boundary && !this._hasProximalBot();
@@ -114,7 +128,7 @@ app.component.Bot.prototype._canStep = function() {
  */
 app.component.Bot.prototype._step = function() {
     var ea              = this.getView().getElement();
-    ea[ this.direction.first().toSetter() ](this._nextPosition(ea));
+    ea[ this._direction.first().toSetter() ](this._nextPosition(ea));
 }
 
 
@@ -125,7 +139,7 @@ app.component.Bot.prototype._step = function() {
 app.component.Bot.prototype._turn = function() {
     var dki = Math.round(Math.random() * 3);
     var dk  = Object.keys(app.component.Bot.DIRECTIONS)[dki];
-    this.direction = app.component.Bot.DIRECTIONS[dk];
+    this._direction = app.component.Bot.DIRECTIONS[dk];
 }
 
 
@@ -134,7 +148,7 @@ app.component.Bot.prototype._turn = function() {
  * occupy.
  */
 app.component.Bot.prototype._nextPosition = function(e) {
-    return this.direction.last() * app.component.Bot._STEP + e[ this.direction.first().toGetter() ]();
+    return this._direction.last() * app.component.Bot._STEP + e[ this._direction.first().toGetter() ]();
 }
 
 
@@ -143,7 +157,7 @@ app.component.Bot.prototype._nextPosition = function(e) {
  * bots in the world.
  */
 app.component.Bot.prototype._hasProximalBot = function() {
-    var bots            = this.world.bots;
+    var bots            = this._world.bots;
     var bot             = null;
     
     for(var i=0, n=bots.length; i<n; i++) {
@@ -160,7 +174,7 @@ app.component.Bot.prototype._hasProximalBot = function() {
  * This function determines whether the bot has found the goal.
  */
 app.component.Bot.prototype._metGoal = function() {
-    var goals   = this.world.goals;
+    var goals   = this._world.goals;
     var goal    = null;
     
     for(var i=0, n=goals.length; i<n; i++) {
@@ -183,6 +197,6 @@ app.component.Bot.prototype._metGoal = function() {
  */
 app.component.Bot.prototype.getBoundingBox = function() {
     var box = this.constructor.prototype.getBoundingBox.apply(this);
-    box[this.direction.first()] = this._nextPosition(this.getView().getElement());
+    box[this._direction.first()] = this._nextPosition(this.getView().getElement());
     return box;
 }

@@ -8,45 +8,19 @@ app.ensureNamespace("app.view");
 /**
  * This class provides the view functionality for the bot component.
  */
-app.view.Bot = function(styleClass) {
+app.view.Bot = function(component) {
     
 	// set class name
 	this.klassName = "app.view.Bot";
 	
-	// set id
-	this.id	= ++app.view.Bot._ID + 47;
-	
 	// state variables
-	this.element    = null;
-    this.styleClass = styleClass || "bot";
+	this._component	 = component;
+	this._element    = null;
+    this._styleClass = "bot";
 }
 
 
-
-// ---------------------------------------------------------------------
-// static 
-// ---------------------------------------------------------------------
-
 /**
- * This is a private property used to identify instances as they are
- * created.
+ * This class extends app.view.AbstractSprite.
  */
-app.view.Bot._ID = 0;
-
-
-
-// ---------------------------------------------------------------------
-// public 
-// ---------------------------------------------------------------------
-
-/**
- * This function returns the dom element for the view. In an effort to
- * be memory efficient, the element is instantiated lazily.
- */
-app.view.Bot.prototype.getElement = function() {
-    if (!this.element) {
-		this.element = new Element("div", { "className": this.styleClass });
-		this.element.appendChild(document.createTextNode(String.fromCharCode(this.id)));
-    }
-    return this.element;
-}
+app.view.Bot.prototype = new app.view.AbstractSprite();
