@@ -73,9 +73,13 @@ var app = {};
  * an object literal with the node name.
  */
 app.ensureNamespace = function(ns) {
+
+	// get working references
 	var obj 	= window;
 	var nodes 	= ns.split(".");
 	var node 	= null;
+	
+	// loop the nodes and construct objects as needed
 	for (var i = 0, n = nodes.length; i < n; i++) {
 		node = nodes[i];
 		if (!obj[node]) {

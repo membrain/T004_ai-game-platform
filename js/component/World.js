@@ -22,6 +22,74 @@ app.component.World = function() {
     
 
 // ---------------------------------------------------------------------
+// private
+// ---------------------------------------------------------------------
+
+/**
+ * This function adds a sprite to the world.
+ */
+app.component.World.prototype._addSprite = function(sprite) {
+
+	// create working variables
+	var se  = sprite.getView().getElement();
+	var we  = this.getView().getElement();
+	
+	// position new sprite view
+	se = this._setElementPosition(se);
+	while (!this._isSpritePositionValid(sprite)) {
+		se = this._setElementPosition(se);
+	}
+    
+	// add sprite view to world view
+	we.insert({ top: se });
+};
+
+
+/**
+ * This function accepts a sprite and determines whether or not its
+ * position intersects with any sprite already in the world.
+ */
+app.component.World.prototype._isSpritePositionValid = function(thisSprite) {
+	
+	// get all sprites
+	var sprites = this.getSprites();
+	
+	// loop sprites and check for intersections
+	var thatSprite = null;
+	for (var i = 0, n = sprites.length; i < n; i++) {
+		thatSprite = sprites[i];
+		if (thisSprite !== thatSprite) {
+			if (thisSprite.intersects(thatSprite)) {
+				return false;
+			}
+		}
+	}
+	
+	// if we got here, return true
+	return true;
+};
+
+
+/**
+ * This function accepts an element and sets randomly generated
+ * top and left values.
+ */
+app.component.World.prototype._setElementPosition = function(el) {
+	
+	// get reference to world element
+	var we = this.getView().getElement();
+	
+	// randomize position of element
+	el.setTop(Math.ceil(Math.random() * we.getBottom()));
+    el.setLeft(Math.ceil(Math.random() * we.getRight()));
+
+	// return the element
+	return el;
+};
+
+
+
+// ---------------------------------------------------------------------
 // public
 // ---------------------------------------------------------------------
 
@@ -29,15 +97,13 @@ app.component.World = function() {
  * This function adds a new bot to the world.
  */
 app.component.World.prototype.addBot = function(botClass) {
-    var bot = new botClass(this);
-    var be  = bot.getView().getElement();
-    var we  = this.getView().getElement();
     
-	be.setTop(Math.ceil(Math.random() * we.getBottom()));
-    be.setLeft(Math.ceil(Math.random() * we.getRight()));
-    
-    this.bots.push(bot);
-    we.insert({ top: be });
+	// create new bot and add to array
+	var bot = new botClass(this);
+	this.bots.push(bot);
+
+	// add sprite to world
+	this._addSprite(bot);
 };
 
 
@@ -45,15 +111,21 @@ app.component.World.prototype.addBot = function(botClass) {
  * This function adds a new goal to the world.
  */
 app.component.World.prototype.addGoal = function(goalClass) {
-    var goal    = new goalClass(this);
-    var ge      = goal.getView().getElement();
-    var we      = this.getView().getElement();
+	
+	// create new bot and add to array
+	var goal = new goalClass(this);
+	this.goals.push(goal);
 
-	ge.setTop(Math.ceil(Math.random() * we.getBottom()));
-    ge.setLeft(Math.ceil(Math.random() * we.getRight()));
-    
-    this.goals.push(goal);
-    we.insert({ top: ge });
+	// add sprite to world
+	this._addSprite(goal);
+};
+
+
+/**
+ * This function returns an array of all sprite objects.
+ */
+app.component.World.prototype.getSprites = function() {
+	return this.bots.concat(this.goals);
 };
 
 
@@ -61,8 +133,8 @@ app.component.World.prototype.addGoal = function(goalClass) {
  * This function returns the view instance for this component.
  */
 app.component.World.prototype.getView = function() {
-	if(!this._view) {
+	if (!this._view) {
 		this._view = new app.view.World(this);
 	}
 	return this._view;
-}
+};
