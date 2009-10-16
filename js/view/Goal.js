@@ -10,11 +10,11 @@ app.ensureNamespace("app.view");
  */
 app.view.Goal = function(styleClass) {
     
-	// offset id to convert to letter keycode
-	this.id	= ++app.view.Goal._ID + 64;
-	
 	// set class name
 	this.klassName = "app.view.Goal";
+	
+	// offset id to convert to letter keycode
+	this.id	= ++app.view.Goal._ID + 64;
 	
 	// state variables
 	this.element    = null;

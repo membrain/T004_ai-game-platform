@@ -10,11 +10,11 @@ app.ensureNamespace("app.view");
  */
 app.view.Bot = function(styleClass) {
     
-	// set id
-	this.id	= app.view.Bot._ID++;
-	
 	// set class name
 	this.klassName = "app.view.Bot";
+	
+	// set id
+	this.id	= ++app.view.Bot._ID + 47;
 	
 	// state variables
 	this.element    = null;
@@ -46,7 +46,7 @@ app.view.Bot._ID = 0;
 app.view.Bot.prototype.getElement = function() {
     if (!this.element) {
 		this.element = new Element("div", { "className": this.styleClass });
-		this.element.appendChild(document.createTextNode(this.id));
+		this.element.appendChild(document.createTextNode(String.fromCharCode(this.id)));
     }
     return this.element;
 }

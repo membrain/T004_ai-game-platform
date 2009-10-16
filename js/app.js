@@ -1,10 +1,10 @@
+// ---------------------------------------------------------------------
+// core extensions
+// ---------------------------------------------------------------------
 
-
-
-/*
-    Core Extensions  ----------------------------------------------------------
-*/
-
+/**
+ * These commands extend the core functionality of the String object.
+ */
 Object.extend(String.prototype, {
     toGetter: function() {
         return "get" + this.capitalize();
@@ -15,6 +15,10 @@ Object.extend(String.prototype, {
     }
 });
 
+
+/**
+ * These commands extend the core functionality of the Element object.
+ */
 Object.extend(Element.Methods, {
     getLeft: function(element) {
         return parseInt(element.style.left) || 0;
@@ -48,31 +52,47 @@ Object.extend(Element.Methods, {
         element.style.top = (bottom - element.getHeight()) + "px";
     }
 });
-
 Element.addMethods();
 
 
 
+// ---------------------------------------------------------------------
+// define the application
+// ---------------------------------------------------------------------
+
+/**
+ * This object serves as the root namespace for all of our classes.
+ */
 var app = {};
 
-app.bootstrap = function() {
-	for(var i=0; i<10; i++) {
-		app.component.World.addBot(app.component.Bot);
-	}
-	app.component.World.addGoal(app.component.Goal);
-};
 
+/**
+ * This function accepts a dot-delimited string and then iterates the
+ * nodes of that string, ensuring that the nodes exist as objects under
+ * the window object.  If any node does not exist, this function creates 
+ * an object literal with the node name.
+ */
 app.ensureNamespace = function(ns) {
-	var obj = window;
-	var names = ns.split(".");
-	var name = null;
-	for (var i = 0, n = names.length; i < n; i++) {
-		name = names[i];
-		if (!obj[name]) {
-			obj[name] = {};
+	var obj 	= window;
+	var nodes 	= ns.split(".");
+	var node 	= null;
+	for (var i = 0, n = nodes.length; i < n; i++) {
+		node = nodes[i];
+		if (!obj[node]) {
+			obj[node] = {};
 		}
-		obj = obj[name]
+		obj = obj[node]
 	}
 };
 
 
+/**
+ * This function starts the application.
+ */
+app.start = function() {
+	var world = new app.component.World();
+	for (var i = 0; i < 10; i++) {
+		world.addBot(app.component.Bot);
+	}
+	world.addGoal(app.component.Goal);
+};
