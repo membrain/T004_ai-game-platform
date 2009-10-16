@@ -1,24 +1,62 @@
 app.ensureNamespace("app.component");
 
 
+// ---------------------------------------------------------------------
+// constructor
+// ---------------------------------------------------------------------
+
+/**
+ * This class provides main logic for the bot component.
+ */
 app.component.Bot = function(world) {
-    this.world      = world;
+	
+	// set class name
+	this.klassName = "app.component.Bot";
+	
+	// state variables
+	this.world      = world;
     this.motor      = setInterval(this._takeTurn.bind(this), 25);
     this.direction  = app.component.Bot.DIRECTIONS.WEST;
 }
 
-// Bot extends Sprite
+
+/**
+ * This class extends app.component.Sprite.
+ */
 app.component.Bot.prototype = new app.component.Sprite("app.view.Bot");
 
-app.component.Bot.STEP          = 2;
-app.component.Bot.DIRECTIONS    = {
+
+
+// ---------------------------------------------------------------------
+// static
+// ---------------------------------------------------------------------
+
+/**
+ * This defines the distance a bot moves each time it takes a step.
+ */
+app.component.Bot._STEP = 2;
+
+
+/**
+ * This defines the directions a bot can move and provides associated dom
+ * and mathematical values.
+ */
+app.component.Bot.DIRECTIONS = {
     NORTH:  ["top",       -1],
     SOUTH:  ["bottom",     1],
     WEST:   ["left",      -1],
     EAST:   ["right",      1]
 }
 
-// This function represents a single motor revolution.
+
+
+// ---------------------------------------------------------------------
+// private
+// ---------------------------------------------------------------------
+
+/**
+ * This function represents a single motor revolution.
+ */
 app.component.Bot.prototype._takeTurn = function() {
     if (this._metGoal()) {
 	    clearInterval(this.motor);
@@ -53,7 +91,10 @@ app.component.Bot.prototype._takeTurn = function() {
     }
 }
 
-// Determines whether the bot can take a step
+
+/**
+ * This function determines whether the bot can take a step.
+ */
 app.component.Bot.prototype._canStep = function() {
     var ea              = this.getView().getElement();
     var ew              = this.world.getElement();
@@ -67,11 +108,15 @@ app.component.Bot.prototype._canStep = function() {
     }
 }
 
-// Moves the bot one step in its current direction
+
+/**
+ * This function moves the bot one step in its current direction.
+ */
 app.component.Bot.prototype._step = function() {
     var ea              = this.getView().getElement();
     ea[ this.direction.first().toSetter() ](this._nextPosition(ea));
 }
+
 
 /**
  * This function is responsible for making the bot turn.  For now, its direction
@@ -83,12 +128,20 @@ app.component.Bot.prototype._turn = function() {
     this.direction = app.component.Bot.DIRECTIONS[dk];
 }
 
-// Returns the next position in the world this bot will occupy.
+
+/**
+ * This function returns the next position in the world this bot will 
+ * occupy.
+ */
 app.component.Bot.prototype._nextPosition = function(e) {
-    return this.direction.last() * app.component.Bot.STEP + e[ this.direction.first().toGetter() ]();
+    return this.direction.last() * app.component.Bot._STEP + e[ this.direction.first().toGetter() ]();
 }
 
-// Determines whether this bot is proximal to any other bots in the world.
+
+/**
+ * This function determines whether this bot is proximal to any other 
+ * bots in the world.
+ */
 app.component.Bot.prototype._hasProximalBot = function() {
     var bots            = this.world.bots;
     var bot             = null;
@@ -102,7 +155,10 @@ app.component.Bot.prototype._hasProximalBot = function() {
     return false;
 }
 
-// Determines whether the bot has found the goal
+
+/**
+ * This function determines whether the bot has found the goal.
+ */
 app.component.Bot.prototype._metGoal = function() {
     var goals   = this.world.goals;
     var goal    = null;
@@ -114,8 +170,14 @@ app.component.Bot.prototype._metGoal = function() {
     return false;
 }
 
+
+
+// ---------------------------------------------------------------------
+// public
+// ---------------------------------------------------------------------
+
 /**
- * Returns the bounding box of the bot.  This function overrides the basic
+ * This function returns the bounding box of the bot.  It overrides the basic
  * getBoundingBox function provided by Sprite to account for the bot's
  * trajectory.
  */

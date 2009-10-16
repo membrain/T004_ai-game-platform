@@ -1,6 +1,15 @@
 app.ensureNamespace("app.component");
 
 
+// ---------------------------------------------------------------------
+// singleton
+// ---------------------------------------------------------------------
+
+/**
+ * This class establishes the world in which our agents interact.
+ * Because this class is created as an object literal, it operates as a 
+ * singleton and cannot be used as a constructor. 
+ */
 app.component.World = {
     bots:       [],
     goals:      [],

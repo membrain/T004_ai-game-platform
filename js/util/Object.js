@@ -2,11 +2,13 @@ app.ensureNamespace("app.util");
 
 
 // ---------------------------------------------------------------------
-// constructor
+// singleton
 // ---------------------------------------------------------------------
 
 /**
- * This class exposes a set of useful object hash manipulation methods. 
+ * This class exposes a set of useful object hash manipulation methods.
+ * Because this class is created as a new function, it operates as a 
+ * singleton and cannot be used as a constructor. 
  */
 app.util.Object = new function() {
 	
@@ -21,34 +23,23 @@ app.util.Object = new function() {
 // ---------------------------------------------------------------------
 
 /**
- * This function allows one to provide a complex object and a '.' 
- * delimited property key--which represents an object property
- * hierarchy--and have returned the property value residing at the
- * last item in the property list.
- * 
- * For the programmer:
- * 
- * This functionality is a candidate for recursion; however, given our
- * performance requrements, it makes more sense to flatten the
- * required stack space into one item by way of looping, instead
- * of pushing a process onto the stack.  As well, we don't risk blowing
- * the stack!
- 
- * @param {Object} object       the object being inspected
- * @param {Object} property     the property on that object to be read
- * @param {Object} defaultValue the value to return if the property cannot be found
+ * This function converts a string version of a class name into a 
+ * reference for the class itself.
  */
 app.util.Object.forName = function(name) {
-    var branch  = name.split(".");
-    var obj     = window;
     
-    for(var i=0, n=branch.length; i<n; i++) {
-        if(!obj) {
+	// define working variables
+	var obj     = window;
+    var parts	= name.split(".");
+	
+	// loop parts and walk down object hash
+    for (var i = 0, n = parts.length; i < n; i++) {
+        if (!obj) {
             throw new Error("Could not dereference: " + name);
         }
-        
-        obj = obj[branch[i]];
+        obj = obj[parts[i]];
     }
     
+	// return the reference
     return obj;
 };
