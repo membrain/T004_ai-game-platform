@@ -3,48 +3,33 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
+	<!-- header crapola -->
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
 	<title>::..::..::..::.. Robot Party ..::..::..::..::</title>
+
 	
-	<style>
-		body {
-			background:				#FFC;
-			margin:					0;
-		}
-		
-		.bot,
-		.goal {
-			border:					1px solid #333;
-			background:				#666;
-			-moz-border-radius:		10px;
-			-webkit-border-radius:	10px;
-			-moz-box-shadow:		0px 2px 2px rgba(0, 0, 0, 0.5);
-			-webkit-box-shadow:		0px 2px 2px rgba(0, 0, 0, 0.5);
-			position:				absolute;
-			font:           18px Verdana, Geneva, sans-serif;
-			color:          white;
-			text-align:     center;
-			width:					25px;
-			height:					25px;
-		}
-		
-		.goal {
-			background:				#F00;
-			/*top:					100px;
-						left:					200px;*/
-		}
-	</style>
+	<!-- require stylesheets -->
+	<link href="css/app.css" media="screen" rel="stylesheet" type="text/css" />
+
 	
-	<script src="js/prototype.js" type="text/javascript"></script>
-	<script src="js/playboy_channel.js" type="text/javascript"></script>
+	<!-- require any toolkit files -->
+	<script src="js/app-toolkit/prototype.js" type="text/javascript"></script>
 	
+	<!-- require all application files: order tends to be important here -->
+	<script type="text/javascript" src="js/app.js"></script>
+	<script type="text/javascript" src="js/util/Object.js"></script>
+	<script type="text/javascript" src="js/component/Sprite.js"></script>
+	<script type="text/javascript" src="js/component/World.js"></script>
+	<script type="text/javascript" src="js/component/Bot.js"></script>
+	<script type="text/javascript" src="js/component/Goal.js"></script>
+	<script type="text/javascript" src="js/view/Bot.js"></script>
+	<script type="text/javascript" src="js/view/Goal.js"></script>
+	
+	
+	<!-- create the game when the load loads -->
 	<script type="text/javascript">
 		Event.observe(window, "load", function() {
-			for(var i=0; i<10; i++) {
-				World.addBot(Bot);
-			}
-			World.addGoal(Goal);	
+			app.bootstrap();	
 		});
 	</script>
 </head>

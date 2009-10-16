@@ -1,0 +1,22 @@
+body {
+	background:				#FFC;
+	margin:					0;
+}
+
+.bot,
+.goal {
+	margin:					0;
+	padding:				0;
+	border:					1px solid #333;
+	background:				#666;
+	position:				absolute;
+	font:           		18px Verdana, Geneva, sans-serif;
+	color:          		white;
+	text-align:     		center;
+	width:					25px;
+	height:					25px;
+}
+
+.goal {
+	background:				#F00;
+}
