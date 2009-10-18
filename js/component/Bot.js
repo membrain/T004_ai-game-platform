@@ -22,7 +22,8 @@ app.component.Bot = function(world) {
 	
 	// state variables (model-specific)
     this._motor      	= setInterval(this._takeTurn.bind(this), 25);
-    this._direction  	= app.component.Bot.DIRECTIONS.WEST;
+    this._direction  	= app.component.Bot.DIRECTIONS.last();
+    
 }
 
 
@@ -55,12 +56,12 @@ app.component.Bot._STEP = 2;
  * This defines the directions a bot can move and provides associated dom
  * and mathematical values.
  */
-app.component.Bot.DIRECTIONS = {
-    NORTH:  ["top",       -1],
-    SOUTH:  ["bottom",     1],
-    WEST:   ["left",      -1],
-    EAST:   ["right",      1]
-}
+app.component.Bot.DIRECTIONS = [
+    ["top",       -1],  // North
+    ["right",      1],  // East
+    ["bottom",     1],  // South
+    ["left",      -1]   // West
+]
 
 
 
@@ -79,27 +80,20 @@ app.component.Bot.prototype._takeTurn = function() {
 	
     if(this._canStep()) {
         this._step();
-        
+    
         // ---------------------------------------------------
         // This random turning is here to prevent the bot
         // from following the perimeter of the world.
         // ---------------------------------------------------
-        var i = Math.round(Math.random() * 100) % 60;
-        if(i === 0) {
-            this._turn();
-        } else if (i < 20) {
-			var ea              = this.getView().getElement();
-			var nextPosition    = this._nextPosition(ea);
-		 	if (this._hasProximalBot()) {
-				//alert("number " + this.id + " turning 'cos of a bot!")
-				this._turn();
-			}
-		}
-		
+        var i = Math.round(Math.random() * 100);
+        var j = i % 60;
+        if(j === 0) {
+            this._turn(i);
+        }
+	
         // ---------------------------------------------------
         // End Silly Hack
         // ---------------------------------------------------
-        
     } else {
         this._turn();
     }
@@ -136,12 +130,13 @@ app.component.Bot.prototype._step = function() {
  * This function is responsible for making the bot turn.  For now, its direction
  * is random.
  */
-app.component.Bot.prototype._turn = function() {
-    var dki = Math.round(Math.random() * 3);
-    var dk  = Object.keys(app.component.Bot.DIRECTIONS)[dki];
-    this._direction = app.component.Bot.DIRECTIONS[dk];
+app.component.Bot.prototype._turn = function(times) {
+    times           = times || 1;
+    var directions  = app.component.Bot.DIRECTIONS;
+    var current     = directions.indexOf(this._direction);
+    var next        = (current + directions.length + times) % directions.length;
+    this._direction = app.component.Bot.DIRECTIONS[next];
 }
-
 
 /**
  * This function returns the next position in the world this bot will 
