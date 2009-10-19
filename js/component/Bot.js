@@ -21,9 +21,8 @@ app.component.Bot = function(world) {
 	this._world      	= world;
 	
 	// state variables (model-specific)
-    this._motor      	= setInterval(this._takeTurn.bind(this), 25);
+    this._motor      	= null;
     this._direction  	= app.component.Bot.DIRECTIONS.last();
-    
 }
 
 
@@ -66,6 +65,44 @@ app.component.Bot.DIRECTIONS = [
 
 
 // ---------------------------------------------------------------------
+// public
+// ---------------------------------------------------------------------
+
+/**
+ * This function returns the bounding box of the bot.  It overrides the basic
+ * getBoundingBox function provided by Sprite to account for the bot's
+ * trajectory.
+ */
+app.component.Bot.prototype.getBoundingBox = function() {
+    var box = this.constructor.prototype.getBoundingBox.apply(this);
+    box[this._direction.first()] = this._nextPosition(this.getView().getElement());
+    return box;
+}
+
+
+/**
+ * This function destroys the event loop that functions as the bot's brain.
+ */
+app.component.Bot.prototype.sleep = function() {
+	if (this._motor) {
+		clearInterval(this._motor);
+		this._motor = null;
+	}
+}
+
+
+/**
+ * This function creates the event loop that functions as the bot's brain.
+ */
+app.component.Bot.prototype.wake = function() {
+	if (!this._motor) {
+		this._motor = setInterval(this._takeTurn.bind(this), 25);
+	}
+}
+
+
+
+// ---------------------------------------------------------------------
 // private
 // ---------------------------------------------------------------------
 
@@ -74,7 +111,7 @@ app.component.Bot.DIRECTIONS = [
  */
 app.component.Bot.prototype._takeTurn = function() {
     if (this._metGoal()) {
-	    clearInterval(this._motor);
+	    this.sleep();
 	    return;
 	}
 	
@@ -177,21 +214,4 @@ app.component.Bot.prototype._metGoal = function() {
         if(this.intersects(goal)) return true;
     } 
     return false;
-}
-
-
-
-// ---------------------------------------------------------------------
-// public
-// ---------------------------------------------------------------------
-
-/**
- * This function returns the bounding box of the bot.  It overrides the basic
- * getBoundingBox function provided by Sprite to account for the bot's
- * trajectory.
- */
-app.component.Bot.prototype.getBoundingBox = function() {
-    var box = this.constructor.prototype.getBoundingBox.apply(this);
-    box[this._direction.first()] = this._nextPosition(this.getView().getElement());
-    return box;
 }

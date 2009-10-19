@@ -4,6 +4,7 @@ body {
 }
 
 .bot,
+.botHypnotized,
 .goal {
 	margin:					0;
 	padding:				0;
@@ -15,6 +16,10 @@ body {
 	text-align:     		center;
 	width:					25px;
 	height:					25px;
+}
+
+.botHypnotized {
+	background:				#36C;
 }
 
 .goal {

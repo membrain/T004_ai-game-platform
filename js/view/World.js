@@ -13,24 +13,9 @@ app.view.World = function() {
 	// set class name
 	this.klassName = "app.view.World";
 	
-	// set id
-	this.id	= ++app.view.World._ID;
-	
 	// state variables
 	this._element    = null;
 }
-
-
-
-// ---------------------------------------------------------------------
-// static 
-// ---------------------------------------------------------------------
-
-/**
- * This is a private property used to identify instances as they are
- * created.
- */
-app.view.World._ID = 0;
 
 
 
