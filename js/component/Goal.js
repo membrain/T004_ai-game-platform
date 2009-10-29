@@ -10,15 +10,15 @@ app.ensureNamespace("app.component");
  */
 app.component.Goal = function(world) {
     
-	// set the class name
-	this.klassName = "app.component.Goal";
-	
-	// set id
-	this.id = ++app.component.Goal._ID;
-	
-	// state variables (common)
-	this._viewClassName = "app.view.Goal";
-	this._world 		= world;
+    // set the class name
+    this.klassName = "app.component.Goal";
+    
+    // set id
+    this.id = ++app.component.Goal._ID;
+    
+    // state variables (common)
+    this._viewClassName = "app.view.Goal";
+    this._world         = world;
 }
 
 

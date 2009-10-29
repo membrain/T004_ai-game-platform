@@ -11,10 +11,10 @@ app.ensureNamespace("app.component");
  */
 app.component.AbstractSprite = function() {
     
-	// state variables
-	this._view			= null;
-	this._viewClassName	= null;
-    this._world			= null;
+    // state variables
+    this._view          = null;
+    this._viewClassName = null;
+    this._world         = null;
 }
 
 
@@ -28,8 +28,8 @@ app.component.AbstractSprite = function() {
  */
 app.component.AbstractSprite.prototype.getView = function() {
     if (!this._view) {
-		var util	= app.util.Object;
-		this._view 	= new (util.forName(this._viewClassName))(this);
+        var util    = app.util.Object;
+        this._view  = new (util.forName(this._viewClassName))(this);
     }
     return this._view;
 }
@@ -40,10 +40,10 @@ app.component.AbstractSprite.prototype.getView = function() {
  */
 app.component.AbstractSprite.prototype.getBoundingBox = function() {
     
-	// get view element
-	var element = this._view.getElement();
+    // get view element
+    var element = this._view.getElement();
     
-	// use element to construct map of vertices
+    // use element to construct map of vertices
     return {
         top:    element.getTop(),
         right:  element.getRight(),
@@ -58,16 +58,16 @@ app.component.AbstractSprite.prototype.getBoundingBox = function() {
  * that of the provided sprite.
  */
 app.component.AbstractSprite.prototype.intersects = function(sprite) {
-	
-	// get working references
-	thisBoundingBox = this.getBoundingBox();
+    
+    // get working references
+    thisBoundingBox = this.getBoundingBox();
     thatBoundingBox = sprite.getBoundingBox();
     
-	// evaluate intersection
+    // evaluate intersection
     return !(
-		thatBoundingBox.bottom 	< thisBoundingBox.top 		||
-        thatBoundingBox.top 	> thisBoundingBox.bottom 	||
-        thatBoundingBox.right 	< thisBoundingBox.left 		||
-        thatBoundingBox.left 	> thisBoundingBox.right
-	);
+        thatBoundingBox.bottom  < thisBoundingBox.top       ||
+        thatBoundingBox.top     > thisBoundingBox.bottom    ||
+        thatBoundingBox.right   < thisBoundingBox.left      ||
+        thatBoundingBox.left    > thisBoundingBox.right
+    );
 }

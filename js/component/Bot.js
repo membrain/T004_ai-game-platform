@@ -9,20 +9,20 @@ app.ensureNamespace("app.component");
  * This class provides main logic for the bot component.
  */
 app.component.Bot = function(world) {
-	
-	// set class name
-	this.klassName = "app.component.Bot";
-	
-	// set id
-	this.id = ++app.component.Bot._ID;
-	
-	// state variables (common)
-	this._viewClassName = "app.view.Bot";
-	this._world      	= world;
-	
-	// state variables (model-specific)
-    this._motor      	= null;
-    this._direction  	= app.component.Bot.DIRECTIONS.last();
+    
+    // set class name
+    this.klassName = "app.component.Bot";
+    
+    // set id
+    this.id = ++app.component.Bot._ID;
+    
+    // state variables (common)
+    this._viewClassName = "app.view.Bot";
+    this._world         = world;
+    
+    // state variables (model-specific)
+    this._motor         = null;
+    this._direction     = app.component.Bot.DIRECTIONS.last();
 }
 
 
@@ -84,10 +84,10 @@ app.component.Bot.prototype.getBoundingBox = function() {
  * This function destroys the event loop that functions as the bot's brain.
  */
 app.component.Bot.prototype.sleep = function() {
-	if (this._motor) {
-		clearInterval(this._motor);
-		this._motor = null;
-	}
+    if (this._motor) {
+        clearInterval(this._motor);
+        this._motor = null;
+    }
 }
 
 
@@ -95,9 +95,9 @@ app.component.Bot.prototype.sleep = function() {
  * This function creates the event loop that functions as the bot's brain.
  */
 app.component.Bot.prototype.wake = function() {
-	if (!this._motor) {
-		this._motor = setInterval(this._takeTurn.bind(this), 25);
-	}
+    if (!this._motor) {
+        this._motor = setInterval(this._takeTurn.bind(this), 25);
+    }
 }
 
 
@@ -111,10 +111,10 @@ app.component.Bot.prototype.wake = function() {
  */
 app.component.Bot.prototype._takeTurn = function() {
     if (this._metGoal()) {
-	    this.sleep();
-	    return;
-	}
-	
+        this.sleep();
+        return;
+    }
+    
     if(this._canStep()) {
         this._step();
     
@@ -127,7 +127,7 @@ app.component.Bot.prototype._takeTurn = function() {
         if(j === 0) {
             this._turn(i);
         }
-	
+    
         // ---------------------------------------------------
         // End Silly Hack
         // ---------------------------------------------------

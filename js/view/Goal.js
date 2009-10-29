@@ -10,13 +10,13 @@ app.ensureNamespace("app.view");
  */
 app.view.Goal = function(component) {
     
-	// set class name
-	this.klassName = "app.view.Goal";
-	
-	// state variables
-	this._component		= component;
-	this._element    	= null;
-    this._styleClass 	= "goal";
+    // set class name
+    this.klassName = "app.view.Goal";
+    
+    // state variables
+    this._component     = component;
+    this._element       = null;
+    this._styleClass    = "goal";
 }
 
 

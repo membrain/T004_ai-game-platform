@@ -11,9 +11,9 @@ app.ensureNamespace("app.view");
  */
 app.view.AbstractSprite = function() {
     
-	// state variables
-	this._component	 = null;
-	this._element    = null;
+    // state variables
+    this._component  = null;
+    this._element    = null;
     this._styleClass = null;
 }
 
@@ -29,8 +29,8 @@ app.view.AbstractSprite = function() {
  */
 app.view.AbstractSprite.prototype.getElement = function() {
     if (!this._element) {
-		this._element = new Element("div", { "className": this._styleClass });
-		this._element.appendChild(document.createTextNode(String.fromCharCode(this._component.id)));
+        this._element = new Element("div", { "className": this._styleClass });
+        this._element.appendChild(document.createTextNode(String.fromCharCode(this._component.id)));
     }
     return this._element;
 }
