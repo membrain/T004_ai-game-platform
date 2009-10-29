@@ -60,7 +60,7 @@ app.component.Bot.DIRECTIONS = [
     ["right",      1],  // East
     ["bottom",     1],  // South
     ["left",      -1]   // West
-]
+];
 
 
 

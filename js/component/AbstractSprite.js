@@ -49,7 +49,7 @@ app.component.AbstractSprite.prototype.getBoundingBox = function() {
         right:  element.getRight(),
         bottom: element.getBottom(),
         left:   element.getLeft()
-    }
+    };
 }
 
 
