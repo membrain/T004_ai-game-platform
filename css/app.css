@@ -4,12 +4,10 @@ body {
 }
 
 .bot,
-.botHypnotized,
 .goal {
 	margin:					0;
 	padding:				0;
 	border:					1px solid #333;
-	background:				#666;
 	position:				absolute;
 	font:           		18px Verdana, Geneva, sans-serif;
 	color:          		white;
@@ -18,10 +16,12 @@ body {
 	height:					25px;
 }
 
-.botHypnotized {
-	background:				#36C;
+.bot {
+    background:             #666;
+    z-index:                2;
 }
 
 .goal {
 	background:				#F00;
+	z-index:                1;
 }

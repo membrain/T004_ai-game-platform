@@ -11,17 +11,42 @@ app.ensureNamespace("app.component");
  */
 app.component.AbstractSprite = function() {
     
-    // state variables
-    this._view          = null;
-    this._viewClassName = null;
-    this._world         = null;
+	// state variables
+	this._view			= null;
+	this._viewClassName	= null;
+    this._world			= null;
+    this._id            = null;
 }
+
+
+
+// ---------------------------------------------------------------------
+// class
+// ---------------------------------------------------------------------
+
+/**
+ * This property is an incrementor that allows each instance of abstract sprite
+ * have a unique identifier.
+ */
+app.component.AbstractSprite.NEXT_ID = 1;
 
 
 
 // ---------------------------------------------------------------------
 // public
 // ---------------------------------------------------------------------
+
+/**
+ * This function returns the sprite's unique ID.  This ensures all sprites
+ * get an ID.
+ */
+app.component.AbstractSprite.prototype.getId = function() {
+    if (!this._id) {
+        this._id = app.component.AbstractSprite.NEXT_ID++;
+    }
+    return this._id;
+}
+
 
 /**
  * This function returns the view of the sprite.
@@ -36,20 +61,11 @@ app.component.AbstractSprite.prototype.getView = function() {
 
 
 /**
- * This function returns the bounding box of the sprite.
+ * This function is a proxy for a method of the same name on the 
+ * view class.
  */
 app.component.AbstractSprite.prototype.getBoundingBox = function() {
-    
-    // get view element
-    var element = this._view.getElement();
-    
-    // use element to construct map of vertices
-    return {
-        top:    element.getTop(),
-        right:  element.getRight(),
-        bottom: element.getBottom(),
-        left:   element.getLeft()
-    };
+    return this._view.getBoundingBox();
 }
 
 

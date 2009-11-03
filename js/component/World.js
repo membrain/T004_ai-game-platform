@@ -82,20 +82,20 @@ app.component.World.prototype.getView = function() {
 // ---------------------------------------------------------------------
 
 /**
- * This function adds a sprite view to the world.
+ * This function position a sprite view on the world view.
  */
 app.component.World.prototype._positionSprite = function(sprite) {
 
+    // add sprite view to world view
+    var se = sprite.getView().getElement();
+    var we = this.getView().getElement();
+    we.insert({ top: se });
+    
     // position new sprite view
     do {
         this._generateSpritePositionValues(sprite);
     }
     while (!this._isSpritePositionValid(sprite))
-    
-    // add sprite view to world view
-    var se = sprite.getView().getElement();
-    var we = this.getView().getElement();
-    we.insert({ top: se });
 };
 
 
@@ -128,11 +128,17 @@ app.component.World.prototype._isSpritePositionValid = function(thisSprite) {
  */
 app.component.World.prototype._generateSpritePositionValues = function(sprite) {
     
-    // get references to elements
-    var se = sprite.getView().getElement();
+    // get convenience references
+    var sv = sprite.getView();
+    var sb = sv.getBoundingBox();
     var we = this.getView().getElement();
     
-    // randomize position of element
-    se.setTop(Math.ceil(Math.random() * (we.getBottom() - 30)));
-    se.setLeft(Math.ceil(Math.random() * (we.getRight() - 30)));
+    // determine new top and left
+    var top  = Math.ceil(Math.random() * (we.getBottom() - 30));
+    var left = Math.ceil(Math.random() * (we.getRight() - 30));
+    
+    // move sprite to new position (consider current position in the event we 
+    // are repositioning the element due to initial intersection)
+    sv.moveDown(top - sb["top"]);
+    sv.moveRight(left - sb["left"]);
 };
