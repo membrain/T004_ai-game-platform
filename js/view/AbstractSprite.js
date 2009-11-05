@@ -15,15 +15,13 @@ app.ensureNamespace("app.view");
  * inevitably create logic problems here.
  */
 app.view.AbstractSprite = function() {
-    
 	// state variables
 	this._id    	    = null;
 	this._element       = null;
     this._styleClass    = null;
     this._boundingBox   = null;
+    this._painter       = null;
 }
-
-
 
 // ---------------------------------------------------------------------
 // public 
@@ -133,12 +131,12 @@ app.view.AbstractSprite.prototype._getBoundingBox = function() {
  * and the relative change to that property.
  */ 
 app.view.AbstractSprite.prototype._moveCoordinate = function(coord, value) {
-    
     // store new value in memory
     this._getBoundingBox()[coord] += value;
     
-    // make corresponding change to dom
-    this.getElement()[coord.toSetter()](this._getBoundingBox()[coord]);
+    if (!this._painter) {
+        this._painter = setInterval(this._paint.bind(this), 100);
+    }
 }
 
 /**
@@ -154,3 +152,10 @@ app.view.AbstractSprite.prototype.intersects = function(sprite) {
     // evaluate intersection
     return thisBoundingBox.intersects(thatBoundingBox);
 }
+
+app.view.AbstractSprite.prototype._paint = function() {
+    // make corresponding change to dom
+    var box = this._getBoundingBox();
+    this.getElement().setTop(box.top);
+    this.getElement().setLeft(box.left);
+};
