@@ -8,13 +8,13 @@ app.ensureNamespace("app.view");
 /**
  * This class provides the view functionality for the bot component.
  */
-app.view.Bot = function(component) {
+app.view.Bot = function(id) {
     
     // set class name
     this.klassName = "app.view.Bot";
     
     // state variables
-    this._component  = component;
+    this._id         = id;
     this._element    = null;
     this._styleClass = "bot";
 }

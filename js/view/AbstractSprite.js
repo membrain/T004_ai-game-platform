@@ -17,7 +17,7 @@ app.ensureNamespace("app.view");
 app.view.AbstractSprite = function() {
     
 	// state variables
-	this._component	    = null;
+	this._id    	    = null;
 	this._element       = null;
     this._styleClass    = null;
     this._boundingBox   = null;
@@ -36,9 +36,13 @@ app.view.AbstractSprite = function() {
 app.view.AbstractSprite.prototype.getElement = function() {
     if (!this._element) {
 		this._element = new Element("div", { "className": this._styleClass });
-		this._element.appendChild(document.createTextNode(this._component.getId()));
+		this._element.appendChild(document.createTextNode(this._id));
     }
     return this._element;
+}
+
+app.view.AbstractSprite.prototype.isGoal = function() {
+    return false;
 }
 
 
@@ -136,4 +140,23 @@ app.view.AbstractSprite.prototype._moveCoordinate = function(coord, value) {
     
     // make corresponding change to dom
     this.getElement()[coord.toSetter()](this._getBoundingBox()[coord]);
+}
+
+/**
+ * This function determines whether the sprite's bounding box intersects 
+ * that of the provided sprite.
+ */
+app.view.AbstractSprite.prototype.intersects = function(sprite) {
+    
+    // get working references
+    thisBoundingBox = this.getBoundingBox();
+    thatBoundingBox = sprite.getBoundingBox();
+    
+    // evaluate intersection
+    return !(
+        thatBoundingBox.bottom  < thisBoundingBox.top       ||
+        thatBoundingBox.top     > thisBoundingBox.bottom    ||
+        thatBoundingBox.right   < thisBoundingBox.left      ||
+        thatBoundingBox.left    > thisBoundingBox.right
+    );
 }

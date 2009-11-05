@@ -8,14 +8,15 @@ app.ensureNamespace("app.component");
 /**
  * This class provides main logic for the bot component.
  */
-app.component.Bot = function(world) {
+app.component.Bot = function(world, id) {
     
     // set class name
     this.klassName      = "app.component.Bot";
     
     // state variables (common)
-    this._viewClassName = "app.view.Bot";
+    // this._viewClassName = "app.view.Bot";
     this._world         = world;
+    this._id            = id;
     
     // state variables (model-specific)
     this._brain         = null;
@@ -128,8 +129,8 @@ app.component.Bot.prototype._move = function(step) {
     step = step || app.component.Bot._STEP;
     
     // move bot
-    var view = this.getView();
-    view["move" + this._direction](step);
+    // var view = this.getView();
+    this._world["move" + this._direction](this._id, step);
 }
 
 
@@ -156,29 +157,7 @@ app.component.Bot.prototype._turn = function(times) {
  * the edge of the world.
  */
 app.component.Bot.prototype._hasBoundaryIntersection = function() {
-    
-    // get working references
-    var we = this._world.getView().getElement();
-    var wb = {
-        "top":      we.getTop(),
-        "bottom":   we.getBottom(),
-        "left":     we.getLeft(),
-        "right":    we.getRight()
-    };
-    var sb = this.getBoundingBox();
-    
-    // if any boundaries crossed, return true
-    if (
-        sb.top      < wb.top    ||
-        sb.bottom   > wb.bottom ||
-        sb.left     < wb.left   ||
-        sb.right    > wb.right
-    ) {
-        return true;
-    }
-    
-    // defaults to no intersections
-    return false;
+    return this._world.hasBoundaryIntersection(this._id);
 }
 
 
@@ -187,7 +166,7 @@ app.component.Bot.prototype._hasBoundaryIntersection = function() {
  * another bot.
  */
 app.component.Bot.prototype._hasBotIntersection = function() {
-    return this._hasSpriteIntersection(this._world.bots);
+    return this._world.hasBotIntersection(this._id);
 }
 
 
@@ -196,30 +175,30 @@ app.component.Bot.prototype._hasBotIntersection = function() {
 * a goal.
 */
 app.component.Bot.prototype._hasGoalIntersection = function() {
-    return this._hasSpriteIntersection(this._world.goals);
+    return this._world.hasGoalIntersection(this._id);
 }
 
 
 /**
 * This function determines whether or not the bot has an intersection with
 * any sprite in the given collection.
-*/
-app.component.Bot.prototype._hasSpriteIntersection = function(sprites) {
-    
-    // get convenience references
-    var sprite  = null;
-
-    // loop collection and look for intersects (any will do)
-    for (var i = 0, n = sprites.length; i < n; i++) {
-        sprite = sprites[i];         
-        if (this === sprite) {
-            continue;
-        }
-        else if (this.intersects(sprite)) {
-            return true;
-        }
-    }
-
-    // defaults to no intersections 
-    return false;
-}
+*/// 
+// app.component.Bot.prototype._hasSpriteIntersection = function(sprites) {
+//     
+//     // get convenience references
+//     var sprite  = null;
+// 
+//     // loop collection and look for intersects (any will do)
+//     for (var i = 0, n = sprites.length; i < n; i++) {
+//         sprite = sprites[i];         
+//         if (this === sprite) {
+//             continue;
+//         }
+//         else if (this.intersects(sprite)) {
+//             return true;
+//         }
+//     }
+// 
+//     // defaults to no intersections 
+//     return false;
+// }

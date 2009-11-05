@@ -8,13 +8,13 @@ app.ensureNamespace("app.view");
 /**
  * This class provides the view functionality for the goal component.
  */
-app.view.Goal = function(component) {
+app.view.Goal = function(id) {
     
     // set class name
     this.klassName = "app.view.Goal";
     
     // state variables
-    this._component     = component;
+    this._id            = id;
     this._element       = null;
     this._styleClass    = "goal";
 }
@@ -24,3 +24,7 @@ app.view.Goal = function(component) {
  * This class extends app.view.AbstractSprite.
  */
 app.view.Goal.prototype = new app.view.AbstractSprite();
+
+app.view.Goal.prototype.isGoal = function() {
+    return true;
+}
