@@ -19,9 +19,7 @@ app.component.World = function() {
     this.goals      = [];
     this.views      = [];
     this._view      = null;
-}
-
-    
+}   
 
 // ---------------------------------------------------------------------
 // public
@@ -34,8 +32,8 @@ app.component.World.prototype.addBot = function(botClass) {
     
     // create new bot and add to array
     var id = this.idx;
-    var bot = new botClass(this, id);
     var botView = new app.view.Bot(id);
+    var bot = new botClass(new app.component.WorldProxy(this, botView));
     
     // position sprite in world
     this._positionSprite(botView);
@@ -154,72 +152,3 @@ app.component.World.prototype._generateSpritePositionValues = function(sv) {
     sv.moveRight(left - sb["left"]);
 };
 
-
-app.component.World.prototype.hasBotIntersection = function(id) {
-    return this._hasSpriteIntersection(id, false);
-};
-
-app.component.World.prototype.hasGoalIntersection = function(id) {
-    return this._hasSpriteIntersection(id, true);
-};
-
-app.component.World.prototype.hasBoundaryIntersection = function(id) {
-    // get working references
-    var we = this.getView().getElement();
-    var wb = {
-        "top":      we.getTop(),
-        "bottom":   we.getBottom(),
-        "left":     we.getLeft(),
-        "right":    we.getRight()
-    };
-    var sb = this.views[id].getBoundingBox();
-    
-    // if any boundaries crossed, return true
-    if (
-        sb.top      < wb.top    ||
-        sb.bottom   > wb.bottom ||
-        sb.left     < wb.left   ||
-        sb.right    > wb.right
-    ) {
-        return true;
-    }
-    
-    // defaults to no intersections
-    return false;
-}
-
-app.component.World.prototype._hasSpriteIntersection = function(id, expectsGoal) {
-    // get convenience references
-    var sprite      = null;
-    var thisSprite  = this.views[id];
-    
-    // loop collection and look for intersects (any will do)
-    for (var i = 0, n = this.views.length; i < n; i++) {
-        sprite = this.views[i];         
-        if (thisSprite === sprite || sprite.isGoal() !== expectsGoal) {
-            continue;
-        }
-        else if (thisSprite.intersects(sprite)) {
-            return true;
-        }
-    }
-
-    // defaults to no intersections 
-    return false;
-}
-
-app.component.World.prototype.moveUp = function(id, steps) {
-  this.views[id].moveUp(steps);  
-};
-
-app.component.World.prototype.moveDown = function(id, steps) {
-  this.views[id].moveDown(steps);  
-};
-
-app.component.World.prototype.moveLeft = function(id, steps) {
-  this.views[id].moveLeft(steps);  
-};
-
-app.component.World.prototype.moveRight = function(id, steps) {
-  this.views[id].moveRight(steps);  
-};
