@@ -10,6 +10,7 @@ app.ensureNamespace("app.component");
  * intended as an abstract class and should not be instantiated directly.
  */
 app.component.AbstractSprite = function() {
+    
 	// state variables
     this._world			= null;
     this._id            = null;
@@ -40,32 +41,3 @@ app.component.AbstractSprite = function() {
 app.component.AbstractSprite.prototype.getId = function() {
     return this._id;
 }
-
-// 
-// /**
-//  * This function is a proxy for a method of the same name on the 
-//  * view class.
-//  */
-// app.component.AbstractSprite.prototype.getBoundingBox = function() {
-//     return this._view.getBoundingBox();
-// }
-// 
-// 
-// /**
-//  * This function determines whether the sprite's bounding box intersects 
-//  * that of the provided sprite.
-//  */
-// app.component.AbstractSprite.prototype.intersects = function(sprite) {
-//     
-//     // get working references
-//     thisBoundingBox = this.getBoundingBox();
-//     thatBoundingBox = sprite.getBoundingBox();
-//     
-//     // evaluate intersection
-//     return !(
-//         thatBoundingBox.bottom  < thisBoundingBox.top       ||
-//         thatBoundingBox.top     > thisBoundingBox.bottom    ||
-//         thatBoundingBox.right   < thisBoundingBox.left      ||
-//         thatBoundingBox.left    > thisBoundingBox.right
-//     );
-// }

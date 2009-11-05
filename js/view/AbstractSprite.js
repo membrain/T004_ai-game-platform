@@ -56,12 +56,11 @@ app.view.AbstractSprite.prototype.getBoundingBox = function() {
     
     // return modified version to comply with expected result elsewhere
     // in the application.
-    return {
-        top:    box.top,
-        bottom: box.top + box.height,
-        left:   box.left,
-        right:  box.left + box.width
-    };
+    return new app.data.BoundingBox(
+            box.top, 
+            box.top + box.height, 
+            box.left, 
+            box.left + box.width);
 }
 
 
@@ -153,10 +152,5 @@ app.view.AbstractSprite.prototype.intersects = function(sprite) {
     thatBoundingBox = sprite.getBoundingBox();
     
     // evaluate intersection
-    return !(
-        thatBoundingBox.bottom  < thisBoundingBox.top       ||
-        thatBoundingBox.top     > thisBoundingBox.bottom    ||
-        thatBoundingBox.right   < thisBoundingBox.left      ||
-        thatBoundingBox.left    > thisBoundingBox.right
-    );
+    return thisBoundingBox.intersects(thatBoundingBox);
 }

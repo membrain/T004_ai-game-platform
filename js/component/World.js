@@ -196,7 +196,7 @@ app.component.World.prototype._hasSpriteIntersection = function(id, expectsGoal)
     // loop collection and look for intersects (any will do)
     for (var i = 0, n = this.views.length; i < n; i++) {
         sprite = this.views[i];         
-        if (thisSprite === sprite || sprite.isGoal() != expectsGoal) {
+        if (thisSprite === sprite || sprite.isGoal() !== expectsGoal) {
             continue;
         }
         else if (thisSprite.intersects(sprite)) {

@@ -177,28 +177,3 @@ app.component.Bot.prototype._hasBotIntersection = function() {
 app.component.Bot.prototype._hasGoalIntersection = function() {
     return this._world.hasGoalIntersection(this._id);
 }
-
-
-/**
-* This function determines whether or not the bot has an intersection with
-* any sprite in the given collection.
-*/// 
-// app.component.Bot.prototype._hasSpriteIntersection = function(sprites) {
-//     
-//     // get convenience references
-//     var sprite  = null;
-// 
-//     // loop collection and look for intersects (any will do)
-//     for (var i = 0, n = sprites.length; i < n; i++) {
-//         sprite = sprites[i];         
-//         if (this === sprite) {
-//             continue;
-//         }
-//         else if (this.intersects(sprite)) {
-//             return true;
-//         }
-//     }
-// 
-//     // defaults to no intersections 
-//     return false;
-// }
