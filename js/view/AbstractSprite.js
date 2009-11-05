@@ -21,6 +21,7 @@ app.view.AbstractSprite = function() {
     this._styleClass    = null;
     this._boundingBox   = null;
     this._painter       = null;
+    this._lastBox       = null;
 }
 
 // ---------------------------------------------------------------------
@@ -94,6 +95,27 @@ app.view.AbstractSprite.prototype.moveDown = function(steps) {
 }
 
 
+/**
+ * This function determines whether the sprite's bounding box intersects 
+ * that of the provided sprite.
+ */
+app.view.AbstractSprite.prototype.intersects = function(sprite) {
+    
+    // get working references
+    thisBoundingBox = this.getBoundingBox();
+    thatBoundingBox = sprite.getBoundingBox();
+    
+    // evaluate intersection
+    return thisBoundingBox.intersects(thatBoundingBox);
+}
+
+/**
+ * Allows the sprite to move back to the last position it was at.
+ */
+app.view.AbstractSprite.prototype.undo = function() {
+    this._boundingBox = this._lastBox;
+};
+
 
 // ---------------------------------------------------------------------
 // private 
@@ -119,6 +141,8 @@ app.view.AbstractSprite.prototype._getBoundingBox = function() {
             left:   0,
             width:  el.getWidth()
         };
+        
+        this._lastBox = Object.clone(this._boundingBox);
     }
     
     // return box
@@ -132,6 +156,7 @@ app.view.AbstractSprite.prototype._getBoundingBox = function() {
  */ 
 app.view.AbstractSprite.prototype._moveCoordinate = function(coord, value) {
     // store new value in memory
+    this._lastBox = Object.clone(this._getBoundingBox());
     this._getBoundingBox()[coord] += value;
     
     if (!this._painter) {
@@ -140,22 +165,13 @@ app.view.AbstractSprite.prototype._moveCoordinate = function(coord, value) {
 }
 
 /**
- * This function determines whether the sprite's bounding box intersects 
- * that of the provided sprite.
+ * This function actually sets the HTML element to the right position
+ * on the screen.
  */
-app.view.AbstractSprite.prototype.intersects = function(sprite) {
-    
-    // get working references
-    thisBoundingBox = this.getBoundingBox();
-    thatBoundingBox = sprite.getBoundingBox();
-    
-    // evaluate intersection
-    return thisBoundingBox.intersects(thatBoundingBox);
-}
-
 app.view.AbstractSprite.prototype._paint = function() {
     // make corresponding change to dom
     var box = this._getBoundingBox();
     this.getElement().setTop(box.top);
     this.getElement().setLeft(box.left);
 };
+
