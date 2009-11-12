@@ -4,18 +4,19 @@ app.component.sense.AbstractSense = function() {};
 
 // Returns the bounding-box of the sense.  This will be a resized version of the
 // sensing bot's bounding-box.
-app.component.sense.AbstractSense.prototype.getBoundingBox = function() {
+app.component.sense.AbstractSense.prototype.computeBoundingBox = function(boundingBox) {
     throw new Error("Method Not Implemented.");
 };
 
-// This method should convert the supplied sprite to some info for the bot.
-app.component.sense.AbstractSense.prototype.process = function(sprite) {
+// Sprites are all sprites that have intersected the sense's bounding box
+app.component.sense.AbstractSense.prototype.process = function(sprites) {
     throw new Error("Method Not Implemented.");
 }
 
-// Is called by the workd to activate the sense.
-app.component.sense.AbstractSense.prototype.activate = function(sprite) {
-    this.onActivate(this.process(sprite));
+// Is called by the world to activate the sense.
+// Sprites are all sprites that have intersected the sense's bounding box
+app.component.sense.AbstractSense.prototype.activate = function(sprites) {
+    this.onActivate(this.process(sprites));
 };
 
 // The bot should overwrite this function with its own handler

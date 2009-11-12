@@ -16,7 +16,17 @@ app.component.WorldProxy = function(world, view) {
     // state variables
     this._world = world;
     this._view = view;
+    this._bot   = null;
 };
+
+app.component.WorldProxy.prototype.setBot = function(bot) {
+    this._bot = bot;
+}
+
+// 
+// app.component.WorldProxy.prototype.getBoundingBox = function() {
+//     this._view.getBoundingBox();
+// }
 
 /**
  * The move* methods provide the ability for the bot to move around.

@@ -160,7 +160,7 @@ app.view.AbstractSprite.prototype._moveCoordinate = function(coord, value) {
     this._getBoundingBox()[coord] += value;
     
     if (!this._painter) {
-        this._painter = setInterval(this._paint.bind(this), 25);
+        this._painter = setInterval(this._paint.bind(this), 10);
     }
 }
 

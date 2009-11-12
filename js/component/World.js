@@ -32,8 +32,11 @@ app.component.World.prototype.addBot = function(botClass) {
     
     // create new bot and add to array
     var id = this.idx;
+     
     var botView = new app.view.Bot(id);
-    var bot = new botClass(new app.component.WorldProxy(this, botView));
+    var proxy = new app.component.WorldProxy(this, botView);
+    var bot = new botClass(proxy);
+    proxy.setBot(bot);
     
     // position sprite in world
     this._positionSprite(botView);

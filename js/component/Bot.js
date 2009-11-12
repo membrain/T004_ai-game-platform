@@ -20,6 +20,9 @@ app.component.Bot = function(world) {
     // state variables (model-specific)
     this._brain         = null;
     this._direction     = app.component.Bot.DIRECTIONS.last();
+    this.senses        = [
+        new app.component.sense.Touch()
+    ];
 }
 
 
@@ -37,7 +40,7 @@ app.component.Bot.prototype = new app.component.AbstractSprite();
 /**
  * This defines the distance a bot moves each time it takes a step.
  */
-app.component.Bot._STEP = 2;
+app.component.Bot._STEP = 1;
 
 
 /**
@@ -72,11 +75,9 @@ app.component.Bot.prototype.sleep = function() {
  */
 app.component.Bot.prototype.wake = function() {
     if (!this._brain) {
-        this._brain = setInterval(this._think.bind(this), 25);
+        this._brain = setInterval(this._think.bind(this), 10);
     }
 }
-
-
 
 // ---------------------------------------------------------------------
 // private
@@ -87,22 +88,25 @@ app.component.Bot.prototype.wake = function() {
  */
 app.component.Bot.prototype._think = function() {
     
-    // if goal collision, kill motor
-    if (this._hasGoalIntersection()) {
-        this.sleep();
-    }
+    // // if goal collision, kill motor
+    // if (this._hasGoalIntersection()) {
+    //     this.sleep();
+    // }
+    // 
+    // // else, if boundary or bot collision, turn around and step
+    // else if (this._hasBoundaryIntersection() || this._hasBotIntersection()) {
+    //     this._turn(2);
+    //     this._move();
+    // }
+    // 
+    // // else, determine if turn required and step
+    // else {
+    //     this._randomizeDirection();
+    //     this._move();
+    // }
     
-    // else, if boundary or bot collision, turn around and step
-    else if (this._hasBoundaryIntersection() || this._hasBotIntersection()) {
-        this._turn(2);
-        this._move();
-    }
-    
-    // else, determine if turn required and step
-    else {
-        this._randomizeDirection();
-        this._move();
-    }
+    this._randomizeDirection();
+    this._move();
 }
 
 
@@ -129,7 +133,7 @@ app.component.Bot.prototype._move = function(step) {
     
     // move bot
     // var view = this.getView();
-    this._world["move" + this._direction](step);
+    return this._world["move" + this._direction](step);
 }
 
 
