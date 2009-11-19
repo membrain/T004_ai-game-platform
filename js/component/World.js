@@ -105,13 +105,12 @@ app.component.World.prototype.botMoved = function(bot, view) {
             var thatView    = this.views[i];
             
             // We're interested in all bots except for the bot that just moved.
-            if (thatSprite !== bot && thatSprite.senses) {
-                for (var j = 0; j < thatSprite.senses.length; j++) {
-                    var sense = thatSprite.senses[j];
-                    var computedBox = sense.computeBoundingBox(
-                            thatView.getBoundingBox());
+            if (thatSprite !== bot) {
+                for (var j = 0; j < bot.senses.length; j++) {
+                    var sense       = bot.senses[j];
+                    var computedBox = sense.computeBoundingBox(viewBox);
                     
-                    if (computedBox.intersects(viewBox)) {
+                    if (computedBox.intersects(thatView.getBoundingBox())) {
                         sense.activate(bot);
                     }
                 }
