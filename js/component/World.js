@@ -15,8 +15,7 @@ app.component.World = function() {
     
     // state variables
     this.idx        = 0;
-    this.bots       = [];
-    this.goals      = [];
+    this.sprites    = [];
     this.views      = [];
     this._view      = null;
 }   
@@ -42,7 +41,7 @@ app.component.World.prototype.addBot = function(botClass) {
     this._positionSprite(view);
     
     // add bot to array
-    this.bots.push(bot);
+    this.sprites.push(bot);
     this.views.push(view);
     
     this.idx++;
@@ -71,7 +70,7 @@ app.component.World.prototype.addGoal = function() {
  * This function returns an array of all sprite objects.
  */
 app.component.World.prototype.getSprites = function() {
-    return this.bots.concat(this.goals);
+    return this.sprites;
 };
 
 app.component.World.prototype.getSpriteViews = function() {
@@ -90,8 +89,28 @@ app.component.World.prototype.getView = function() {
 };
 
 app.component.World.prototype.botMoved = function(bot, view) {
-    if (this.hasSpriteIntersection(view) || this.hasBoundaryIntersection(view)) {
+    if (this.hasSpriteIntersection(view) || 
+            this.hasBoundaryIntersection(view)) {
         view.undo();
+    }
+    else {
+        var viewBox = view.getBoundingBox();
+        
+        for (var i = 0; i < this.sprites.length; i++) {
+            var thatSprite = this.sprites[i];
+            
+            if (thatSprite !== bot) {
+                for (var j = 0; j < thatSprite.senses.length; j++) {
+                    var sense = thatSprite.senses[j];
+                    var computedBox = sense.computeBoundingBox(
+                            this.views[i].getBoundingBox());
+                    
+                    if (computedBox.intersects(viewBox)) {
+                        sense.activate([ bot ]);
+                    }
+                }
+            }
+        }        
     }
 };
 

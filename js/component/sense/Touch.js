@@ -11,3 +11,7 @@ app.component.sense.Touch.prototype.computeBoundingBox = function(botBox) {
 app.component.sense.Touch.prototype.process = function(sprites) {
 
 }
+
+app.component.sense.Touch.prototype.activate = function(sprites) {
+    // console.log("Touch activated!");
+}

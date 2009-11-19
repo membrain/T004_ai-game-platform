@@ -140,7 +140,7 @@ app.load = function() {
 app.start = function() {
     
     // loop bots and wake them up
-    var bots = app._world.bots;
+    var bots = app._world.getSprites();
     var bot  = null;
     for (var i = 0, n = bots.length; i < n; i++) {
         bot = bots[i];
