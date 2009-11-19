@@ -8,14 +8,10 @@ app.ensureNamespace("app.component");
 /**
  * This class provides main logic for the bot component.
  */
-app.component.Bot = function(world) {
+app.component.Bot = function() {
     
     // set class name
     this.klassName      = "app.component.Bot";
-    
-    // state variables (common)
-    // this._viewClassName = "app.view.Bot";
-    this._world         = world;
     
     // state variables (model-specific)
     this._brain         = null;
@@ -106,7 +102,7 @@ app.component.Bot.prototype._think = function() {
     // }
     
     this._randomizeDirection();
-    this._move();
+    this._move(this._direction, app.component.Bot._STEP);
 }
 
 
@@ -121,21 +117,6 @@ app.component.Bot.prototype._randomizeDirection = function() {
         this._turn(i);
     }
 }
-
-
-/**
- * This function moves the bot one step in its current direction.
- */
-app.component.Bot.prototype._move = function(step) {
-
-    // scrub distance
-    step = step || app.component.Bot._STEP;
-    
-    // move bot
-    // var view = this.getView();
-    return this._world["move" + this._direction](step);
-}
-
 
 /**
  * This function is responsible for making the bot turn.
@@ -152,31 +133,4 @@ app.component.Bot.prototype._turn = function(times) {
     
     // save new direction
     this._direction = app.component.Bot.DIRECTIONS[next];
-}
-
-
-/**
- * This function determines whether or not the bot has an intersection with
- * the edge of the world.
- */
-app.component.Bot.prototype._hasBoundaryIntersection = function() {
-    return this._world.hasBoundaryIntersection();
-}
-
-
-/**
- * This function determines whether or not the bot has an intersection with
- * another bot.
- */
-app.component.Bot.prototype._hasBotIntersection = function() {
-    return this._world.hasBotIntersection();
-}
-
-
-/**
-* This function determines whether or not the bot has an intersection with
-* a goal.
-*/
-app.component.Bot.prototype._hasGoalIntersection = function() {
-    return this._world.hasGoalIntersection();
 }

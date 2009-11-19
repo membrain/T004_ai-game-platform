@@ -33,17 +33,17 @@ app.component.World.prototype.addBot = function(botClass) {
     // create new bot and add to array
     var id = this.idx;
      
-    var botView = new app.view.Bot(id);
-    var proxy = new app.component.WorldProxy(this, botView);
-    var bot = new botClass(proxy);
-    proxy.setBot(bot);
+    var view = new app.view.Bot(id);
+    var bot     = new botClass();
+    
+    app.component.WorldBotMethods.addMethodsToBot(this, bot, view);
     
     // position sprite in world
-    this._positionSprite(botView);
+    this._positionSprite(view);
     
     // add bot to array
     this.bots.push(bot);
-    this.views.push(botView);
+    this.views.push(view);
     
     this.idx++;
 };
@@ -89,7 +89,66 @@ app.component.World.prototype.getView = function() {
     return this._view;
 };
 
+app.component.World.prototype.botMoved = function(bot, view) {
+    if (this.hasSpriteIntersection(view) || this.hasBoundaryIntersection(view)) {
+        view.undo();
+    }
+};
 
+/**
+ * Returns true if we're at the edge of the World
+ */
+app.component.World.prototype.hasBoundaryIntersection = function(view) {
+    // get working references
+    var we = this.getView().getElement();
+    var wb = {
+        "top":      we.getTop(),
+        "bottom":   we.getBottom(),
+        "left":     we.getLeft(),
+        "right":    we.getRight()
+    };
+    var sb = view.getBoundingBox();
+    
+    // if any boundaries crossed, return true
+    if (
+        sb.top      < wb.top    ||
+        sb.bottom   > wb.bottom ||
+        sb.left     < wb.left   ||
+        sb.right    > wb.right
+    ) {
+        return true;
+    }
+    
+    // defaults to no intersections
+    return false;
+};
+
+/**
+ * Checks for intersection with another sprite in the world. Returns true if so.
+ * The expectsGoal parameter can be true, false, or null. In the case of null, any
+ * sprite intersection will return true. For true, only goals will be checked. For
+ * false, only bots will be checked.
+ */
+app.component.World.prototype.hasSpriteIntersection = function(view) {
+    // get convenience references
+    var sprite          = null;
+    var thisSprite      = view;
+    var thoseSprites    = this.getSpriteViews();
+    
+    // loop collection and look for intersects (any will do)
+    for (var i = 0, n = thoseSprites.length; i < n; i++) {
+        sprite = thoseSprites[i];
+        if (thisSprite === sprite) {
+            continue;
+        }
+        else if (thisSprite.intersects(sprite)) {
+            return true;
+        }
+    }
+
+    // defaults to no intersections 
+    return false;
+};
 
 // ---------------------------------------------------------------------
 // private
