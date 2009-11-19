@@ -54,13 +54,16 @@ app.component.World.prototype.addBot = function(botClass) {
 app.component.World.prototype.addGoal = function() {
     // create new bot and add to array
     var id = this.idx;
-    var goalView = new app.view.Goal(id);
+    
+    var view = new app.view.Goal(id);
+    var goal = new app.component.Goal();
     
     // add sprite to world
-    this._positionSprite(goalView);
+    this._positionSprite(view);
     
     // add goal to array
-    this.views.push(goalView);
+    this.sprites.push(goal);
+    this.views.push(view);
     
     this.idx++;
 };
@@ -89,24 +92,27 @@ app.component.World.prototype.getView = function() {
 };
 
 app.component.World.prototype.botMoved = function(bot, view) {
-    if (this.hasSpriteIntersection(view) || 
-            this.hasBoundaryIntersection(view)) {
+    if (this.hasSpriteIntersection(view) || this.hasBoundaryIntersection(view)) {
         view.undo();
-    }
-    else {
+    } else {
+        
+        // get the bot's bounding box
         var viewBox = view.getBoundingBox();
         
+        // iterate the sprites
         for (var i = 0; i < this.sprites.length; i++) {
-            var thatSprite = this.sprites[i];
+            var thatSprite  = this.sprites[i];
+            var thatView    = this.views[i];
             
-            if (thatSprite !== bot) {
+            // We're interested in all bots except for the bot that just moved.
+            if (thatSprite !== bot && thatSprite.senses) {
                 for (var j = 0; j < thatSprite.senses.length; j++) {
                     var sense = thatSprite.senses[j];
                     var computedBox = sense.computeBoundingBox(
-                            this.views[i].getBoundingBox());
+                            thatView.getBoundingBox());
                     
                     if (computedBox.intersects(viewBox)) {
-                        sense.activate([ bot ]);
+                        sense.activate(bot);
                     }
                 }
             }

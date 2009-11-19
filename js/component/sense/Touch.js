@@ -1,17 +1,16 @@
 app.ensureNamespace("app.component.sense");
 
-app.component.sense.Touch = function() {};
+app.component.sense.Touch = function() {
+    this.klassName = "app.component.sense.Touch";
+};
 
 app.component.sense.Touch.prototype = new app.component.sense.AbstractSense();
 
 app.component.sense.Touch.prototype.computeBoundingBox = function(botBox) {
-    return Object.clone(botBox).resize(104);
+    var sb = Object.clone(botBox).resize(200);
+    return sb;
 };
 
-app.component.sense.Touch.prototype.process = function(sprites) {
-
-}
-
-app.component.sense.Touch.prototype.activate = function(sprites) {
-    // console.log("Touch activated!");
+app.component.sense.Touch.prototype.process = function(sprite) {
+    return true;
 }

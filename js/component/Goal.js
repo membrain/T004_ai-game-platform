@@ -8,14 +8,10 @@ app.ensureNamespace("app.component");
 /**
  * This class provides main logic for the goal component.
  */
-app.component.Goal = function(world) {
+app.component.Goal = function() {
     
     // set the class name
     this.klassName = "app.component.Goal";
-    
-    // state variables (common)
-    this._viewClassName = "app.view.Goal";
-    this._world         = world;
 }
 
 
