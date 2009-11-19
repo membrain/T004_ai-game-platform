@@ -111,7 +111,7 @@ app.component.World.prototype.botMoved = function(bot, view) {
                     var computedBox = sense.computeBoundingBox(viewBox);
                     
                     if (computedBox.intersects(thatView.getBoundingBox())) {
-                        sense.activate(bot);
+                        sense.activate(thatSprite);
                     }
                 }
             }
