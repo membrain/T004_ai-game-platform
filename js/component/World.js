@@ -99,13 +99,7 @@ app.component.World.prototype.hasBoundaryIntersection = function(view) {
 };
 
 app.component.World.prototype.isOutOfBounds = function(box) {
-    var wb = this._view.getBoundingBox();
-    
-    // if any boundaries crossed, return true
-    return  box.top      < wb.top    ||
-            box.bottom   > wb.bottom ||
-            box.left     < wb.left   ||
-            box.right    > wb.right;
+    return this._view.getBoundingBox().outOfBounds(box);
 };
 
 /**

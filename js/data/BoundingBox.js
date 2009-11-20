@@ -10,12 +10,19 @@ app.data.BoundingBox = function(top, bottom, left, right) {
 
 // Determines whether this bounding box intersects the provided bounding box.
 app.data.BoundingBox.prototype.intersects = function(boundingBox) {
-    return !(
-        boundingBox.bottom  < this.top       ||
-        boundingBox.top     > this.bottom    ||
-        boundingBox.right   < this.left      ||
-        boundingBox.left    > this.right
-    );
+    return !(boundingBox.bottom  < this.top       ||
+             boundingBox.top     > this.bottom    ||
+             boundingBox.right   < this.left      ||
+             boundingBox.left    > this.right);
+}
+
+// Determines whether a bounding box that exists within another bounding box has
+// gone beyond the bounds of its containing bounding box.
+app.data.BoundingBox.prototype.outOfBounds = function(boundingBox) {
+    return  boundingBox.top      < this.top    ||
+            boundingBox.bottom   > this.bottom ||
+            boundingBox.left     < this.left   ||
+            boundingBox.right    > this.right;
 }
 
 // Resizes the bounding box by the supplied percentage, e.g. 100 causes no change, while 200
