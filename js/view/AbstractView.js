@@ -24,16 +24,19 @@ app.view.AbstractView.prototype.getElement = function() {
  */
 app.view.AbstractView.prototype.getBoundingBox = function() {
     
-    // get internal box map
-    var box = this._getBoundingBox();
+    // if no box map, make one
+    if (!this._boundingBox) {
+        
+        // get element reference
+        var el = this.getElement();
+        
+        this._boundingBox = 
+            new app.data.BoundingBox(0, el.getHeight(), 0, el.getWidth());
+    }
     
-    // return modified version to comply with expected result elsewhere
-    // in the application.
-    return new app.data.BoundingBox(
-            box.top, 
-            box.top + box.height, 
-            box.left, 
-            box.left + box.width);
+    // return box
+    return this._boundingBox;
+    
 }
 
 /**
@@ -50,30 +53,5 @@ app.view.AbstractView.prototype.intersects = function(sprite) {
     return thisBoundingBox.intersects(thatBoundingBox);
 }
 
-/**
- * This function returns a private bounding box object that is
- * structured slightly differently from the public object. This box 
- * stores width and height rather than right and bottom.
- */
-app.view.AbstractView.prototype._getBoundingBox = function() {
-
-    // if no box map, make one
-    if (!this._boundingBox) {
-        
-        // get element reference
-        var el = this.getElement();
-        
-        // set new bounding box values
-        this._boundingBox = {
-            top:    0,
-            height: el.getHeight(),
-            left:   0,
-            width:  el.getWidth()
-        };
-    }
-    
-    // return box
-    return this._boundingBox;
-}
 
 

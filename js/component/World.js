@@ -32,7 +32,7 @@ app.component.World.prototype.addBot = function(botClass) {
     // create new bot and add to array
     var id = this.idx;
      
-    var view = new app.view.Bot(id);
+    var view    = new app.view.Bot(id);
     var bot     = new botClass();
     
     app.component.WorldBotMethods.addMethodsToBot(this, bot, view);
@@ -68,19 +68,6 @@ app.component.World.prototype.addGoal = function() {
     this.idx++;
 };
 
-
-/**
- * This function returns an array of all sprite objects.
- */
-app.component.World.prototype.getSprites = function() {
-    return this.sprites;
-};
-
-app.component.World.prototype.getSpriteViews = function() {
-    return this.views;
-};
-
-
 /**
  * This function returns the view instance for this component.
  */
@@ -112,7 +99,7 @@ app.component.World.prototype.hasSpriteIntersection = function(view) {
     // get convenience references
     var sprite          = null;
     var thisSprite      = view;
-    var thoseSprites    = this.getSpriteViews();
+    var thoseSprites    = this.views;
     
     // loop collection and look for intersects (any will do)
     for (var i = 0, n = thoseSprites.length; i < n; i++) {
@@ -155,16 +142,16 @@ app.component.World.prototype._positionSprite = function(view) {
  * This function accepts a sprite and determines whether or not its
  * position intersects with any sprite already in the world.
  */
-app.component.World.prototype._isSpritePositionValid = function(thisSprite) {
+app.component.World.prototype._isSpritePositionValid = function(thisSpriteView) {
     
-    // get all sprites
-    var sprites = this.getSpriteViews();
+    // get all sprite views
+    var spriteViews = this.views;
     
     // loop sprites and check for intersections
-    var thatSprite = null;
-    for (var i = 0, n = sprites.length; i < n; i++) {
-        thatSprite = sprites[i];
-        if (thisSprite.intersects(thatSprite)) {
+    var thatSpriteView = null;
+    for (var i = 0, n = spriteViews.length; i < n; i++) {
+        thatSpriteView = spriteViews[i];
+        if (thisSpriteView.intersects(thatSpriteView)) {
             return false;
         }
     }
@@ -189,7 +176,7 @@ app.component.World.prototype._generateSpritePositionValues = function(sv) {
     
     // move sprite to new position (consider current position in the event we 
     // are repositioning the element due to initial intersection)
-    sv.moveDown(top - sb["top"]);
-    sv.moveRight(left - sb["left"]);
+    sv.moveDown(top - sb.top);
+    sv.moveRight(left - sb.left);
 };
 

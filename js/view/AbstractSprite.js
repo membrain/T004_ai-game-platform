@@ -30,7 +30,7 @@ app.view.AbstractSprite.prototype = new app.view.AbstractView();
  * This function moves the bot to the left by the provided pixels.
  */
 app.view.AbstractSprite.prototype.moveLeft = function(steps) {
-    this._moveCoordinate("left", 0 - steps);
+    this._moveCoordinate("Left", steps);
 }
 
 
@@ -38,7 +38,7 @@ app.view.AbstractSprite.prototype.moveLeft = function(steps) {
  * This function moves the bot to the right by the provided pixels.
  */
 app.view.AbstractSprite.prototype.moveRight = function(steps) {
-    this._moveCoordinate("left", steps);
+    this._moveCoordinate("Right", steps);
 }
 
 
@@ -46,7 +46,7 @@ app.view.AbstractSprite.prototype.moveRight = function(steps) {
  * This function moves the bot up by the provided pixels.
  */
 app.view.AbstractSprite.prototype.moveUp = function(steps) {
-    this._moveCoordinate("top", 0 - steps);
+    this._moveCoordinate("Up", steps);
 }
 
 
@@ -54,7 +54,7 @@ app.view.AbstractSprite.prototype.moveUp = function(steps) {
  * This function moves the bot down by the provided pixels.
  */
 app.view.AbstractSprite.prototype.moveDown = function(steps) {
-    this._moveCoordinate("top", steps);
+    this._moveCoordinate("Down", steps);
 }
 
 // ---------------------------------------------------------------------
@@ -65,9 +65,9 @@ app.view.AbstractSprite.prototype.moveDown = function(steps) {
  * This function is a generic move function. It takes a coordinate value (top or left)
  * and the relative change to that property.
  */ 
-app.view.AbstractSprite.prototype._moveCoordinate = function(coord, value) {
+app.view.AbstractSprite.prototype._moveCoordinate = function(dir, value) {
     // store new value in memory
-    this._getBoundingBox()[coord] += value;
+    this.getBoundingBox()["shift" + dir](value);
     
     if (!this._painter) {
         this._painter = setInterval(this._paint.bind(this), 10);
@@ -80,7 +80,7 @@ app.view.AbstractSprite.prototype._moveCoordinate = function(coord, value) {
  */
 app.view.AbstractSprite.prototype._paint = function() {
     // make corresponding change to dom
-    var box = this._getBoundingBox();
+    var box = this.getBoundingBox();
     this.getElement().setTop(box.top);
     this.getElement().setLeft(box.left);
 };
