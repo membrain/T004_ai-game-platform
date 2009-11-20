@@ -36,34 +36,38 @@ app.component.WorldBotMethods = {
                 
                 // get the bot's bounding box
                 var viewBox = view.getBoundingBox();
-                var info    = null;
+                var allInfo = null;
+                var info    = null
                 
                 // iterate the sprites
-                for (var i = 0; i < world.sprites.length; i++) {
+                for (var i=0, n=world.sprites.length; i<n ; i++) {
                     var thatSprite  = world.sprites[i];
                     var thatView    = world.views[i];
 
                     // We're interested in all bots except for the bot that just moved.
                     if (thatSprite !== bot) {
-                        for (var j = 0; j < bot.senses.length; j++) {
+                        for (var j=0, o=bot.senses.length; j<o; j++) {
                             var sense       = bot.senses[j];
                             var computedBox = sense.computeBoundingBox(viewBox);
 
                             if (computedBox.intersects(thatView.getBoundingBox())) {
-                                if(!info) {
-                                    info = {};
-                                    info[sense.klassName] = [sense.process(thatSprite)];
-                                } else if(!info[sense.klassName]) {
-                                    info[sense.klassName] = [sense.process(thatSprite)];
+                                
+                                info = sense.process(thatSprite);
+                                
+                                if(!allInfo) {
+                                    allInfo = {};
+                                    allInfo[sense.klassName] = [info];
+                                } else if(!allInfo[sense.klassName]) {
+                                    allInfo[sense.klassName] = [info];
                                 } else {
-                                    info[sense.klassName].push(sense.process(thatSprite));
+                                    allInfo[sense.klassName].push(info);
                                 }
                             }
                         }
                     }
                 }
                 
-                return info;  
+                return allInfo;  
             };
         }
     }
