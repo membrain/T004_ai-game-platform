@@ -91,34 +91,6 @@ app.component.World.prototype.getView = function() {
     return this._view;
 };
 
-app.component.World.prototype.botMoved = function(bot, view) {
-    if (this.hasSpriteIntersection(view) || this.hasBoundaryIntersection(view)) {
-        view.undo();
-    } else {
-        
-        // get the bot's bounding box
-        var viewBox = view.getBoundingBox();
-        
-        // iterate the sprites
-        for (var i = 0; i < this.sprites.length; i++) {
-            var thatSprite  = this.sprites[i];
-            var thatView    = this.views[i];
-            
-            // We're interested in all bots except for the bot that just moved.
-            if (thatSprite !== bot) {
-                for (var j = 0; j < bot.senses.length; j++) {
-                    var sense       = bot.senses[j];
-                    var computedBox = sense.computeBoundingBox(viewBox);
-                    
-                    if (computedBox.intersects(thatView.getBoundingBox())) {
-                        sense.activate(thatSprite);
-                    }
-                }
-            }
-        }        
-    }
-};
-
 /**
  * Returns true if we're at the edge of the World
  */

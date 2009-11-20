@@ -16,9 +16,7 @@ app.component.Bot = function() {
     // state variables (model-specific)
     this._brain         = null;
     this._direction     = app.component.Bot.DIRECTIONS.last();
-    this.senses         = [];
-    
-    this._registerSense(app.component.sense.Touch);
+    this.senses         = [ new app.component.sense.Touch() ];
 }
 
 
@@ -79,22 +77,15 @@ app.component.Bot.prototype.wake = function() {
 // private
 // ---------------------------------------------------------------------
 
-app.component.Bot.prototype._registerSense = function(sense) {
-    var instance = new sense();
-    instance.onActivate = this._think.bind(this);
-    this.senses.push(instance);
-}
-
 /**
  * This function represents a single motor revolution.
  */
-app.component.Bot.prototype._think = function(sensoryInput) {
+app.component.Bot.prototype._think = function() {
+    var sensoryInput = this._sense();
     
     if(sensoryInput) {
-        if(sensoryInput.sense instanceof app.component.sense.Touch) {
-            this._turn(2);
-            this._move(this._direction, app.component.Bot._STEP);
-        }
+        this._turn(2);
+        this._move(this._direction, app.component.Bot._STEP);
     } else {
         this._randomizeDirection();
         this._move(this._direction, app.component.Bot._STEP);

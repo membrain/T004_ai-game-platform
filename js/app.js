@@ -160,12 +160,13 @@ app.start = function() {
 app.stop = function() {
     
     // loop bots and put them all to sleep
-    var bots = app._world.bots;
-    var bot  = null;
-    for (var i = 0, n = bots.length; i < n; i++) {
-        bot = bots[i];
-        if (bot.sleep) {
-            bots[i].sleep();
+    var sprites = app._world.sprites;
+    var sprite  = null;
+    
+    for (var i = 0, n = sprites.length; i < n; i++) {
+        sprite = sprites[i];
+        if (sprite.sleep) {
+            sprite.sleep();
         }
     }
     
