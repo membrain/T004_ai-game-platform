@@ -95,28 +95,17 @@ app.component.World.prototype.getView = function() {
  * Returns true if we're at the edge of the World
  */
 app.component.World.prototype.hasBoundaryIntersection = function(view) {
-    // get working references
-    var we = this.getView().getElement();
-    var wb = {
-        "top":      we.getTop(),
-        "bottom":   we.getBottom(),
-        "left":     we.getLeft(),
-        "right":    we.getRight()
-    };
-    var sb = view.getBoundingBox();
+    return this.isOutOfBounds(view.getBoundingBox());
+};
+
+app.component.World.prototype.isOutOfBounds = function(box) {
+    var wb = this._view.getBoundingBox();
     
     // if any boundaries crossed, return true
-    if (
-        sb.top      < wb.top    ||
-        sb.bottom   > wb.bottom ||
-        sb.left     < wb.left   ||
-        sb.right    > wb.right
-    ) {
-        return true;
-    }
-    
-    // defaults to no intersections
-    return false;
+    return  box.top      < wb.top    ||
+            box.bottom   > wb.bottom ||
+            box.left     < wb.left   ||
+            box.right    > wb.right;
 };
 
 /**

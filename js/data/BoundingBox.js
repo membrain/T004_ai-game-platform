@@ -35,3 +35,33 @@ app.data.BoundingBox.prototype.resize = function(percent) {
     this.bottom         += diffY;
     return this;
 }
+
+app.data.BoundingBox.prototype.shiftLeft = function(pixels) {
+    this._hShift(-pixels);
+    return this;
+}
+
+app.data.BoundingBox.prototype.shiftRight = function(pixels) {
+    this._hShift(pixels);
+    return this;
+}
+
+app.data.BoundingBox.prototype.shiftUp = function(pixels) {
+    this._vShift(-pixels);
+    return this;
+}
+
+app.data.BoundingBox.prototype.shiftDown = function(pixels) {
+    this._vShift(pixels);
+    return this;
+}
+
+app.data.BoundingBox.prototype._hShift = function(pixels) {
+    this.left   += pixels;
+    this.right  += pixels;
+}
+
+app.data.BoundingBox.prototype._vShift = function(pixels) {
+    this.top    += pixels;
+    this.bottom += pixels;
+}

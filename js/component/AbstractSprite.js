@@ -12,23 +12,8 @@ app.ensureNamespace("app.component");
 app.component.AbstractSprite = function() {
     
 	// state variables
-    this._world			= null;
-    this._id            = null;
+    this._id = null;
 }
-
-
-
-// ---------------------------------------------------------------------
-// class
-// ---------------------------------------------------------------------
-
-/**
- * This property is an incrementor that allows each instance of abstract sprite
- * have a unique identifier.
- */
-// app.component.AbstractSprite.NEXT_ID = 1;
-
-
 
 // ---------------------------------------------------------------------
 // public

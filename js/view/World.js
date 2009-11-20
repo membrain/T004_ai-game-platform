@@ -17,7 +17,7 @@ app.view.World = function() {
     this._element    = null;
 }
 
-
+app.view.World.prototype = new app.view.AbstractView();
 
 // ---------------------------------------------------------------------
 // public 

@@ -88,7 +88,11 @@ app.component.Bot.prototype._think = function() {
         this._move(this._direction, app.component.Bot._STEP);
     } else {
         this._randomizeDirection();
-        this._move(this._direction, app.component.Bot._STEP);
+        var moved = this._move(this._direction, app.component.Bot._STEP);
+        if(!moved) {
+            this._turn(2);
+            this._move(this._direction, app.component.Bot._STEP);
+        }
     }
 }
 

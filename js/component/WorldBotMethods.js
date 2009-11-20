@@ -1,6 +1,7 @@
 app.ensureNamespace("app.component");
 
 app.component.WorldBotMethods = {
+    
     addMethodsToBot: function(world, bot, view) {
         for(var fnName in this.generators) {
             bot[fnName] = 
@@ -8,11 +9,19 @@ app.component.WorldBotMethods = {
         }
     },
     
+    // These are our generator functions.  They generate mixin methods for the bot, with references
+    // to the view and the world frozen into their local scope.
     generators: {
+        
+        // Generates the bot's move method.
         _move: function(world, bot, view) {
             return function(direction, steps) {
-                if(world.hasSpriteIntersection(view) || world.hasBoundaryIntersection(view)) {
-                    view.undo();
+                
+                // This let's us take into account the trajectory of the bot.
+                var nextBox = Object.clone(view.getBoundingBox())["shift" + direction](steps);
+                
+                if( (world.hasSpriteIntersection(view) || world.hasBoundaryIntersection(view)) && 
+                    (world.isOutOfBounds(nextBox))) {  // We need a second condition to test against other bots.
                     return false;
                 }
                 
@@ -21,6 +30,7 @@ app.component.WorldBotMethods = {
             };
         },
         
+        // Generates the bot's sense method.
         _sense: function(world, bot, view) {
             return function() {
                 

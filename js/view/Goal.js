@@ -24,7 +24,3 @@ app.view.Goal = function(id) {
  * This class extends app.view.AbstractSprite.
  */
 app.view.Goal.prototype = new app.view.AbstractSprite();
-
-app.view.Goal.prototype.isGoal = function() {
-    return true;
-}
