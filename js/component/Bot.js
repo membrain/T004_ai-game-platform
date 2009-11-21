@@ -16,7 +16,7 @@ app.component.Bot = function() {
     // state variables (model-specific)
     this._brain         = null;
     this._direction     = app.component.Bot.DIRECTIONS.last();
-    this._senseHanders  = {};
+    this._senseHandlers = {};
     this.senses         = {};
     
     this._registerSense(app.component.sense.Touch, this._onTouch);
@@ -86,13 +86,13 @@ app.component.Bot.prototype.wake = function() {
 app.component.Bot.prototype._registerSense = function(senseClass, handlerFn) {
     var sense                           = new senseClass();
     this.senses[sense.getId()]          = sense;
-    this._senseHanders[sense.getId()]   = handlerFn || function() {};
+    this._senseHandlers[sense.getId()]   = handlerFn || function() {};
 }
 
 // Acts upon sensory input.
 app.component.Bot.prototype._act = function(sensoryInput) {
     for(var senseId in sensoryInput) {
-        this._senseHanders[senseId].call(this, sensoryInput[senseId]);
+        this._senseHandlers[senseId].call(this, sensoryInput[senseId]);
     }
 }
 
@@ -163,16 +163,15 @@ app.component.Bot.prototype._onSee = function(sightInfo) {
 
             setTimeout(function() {
                 this.wake();
-                this._turn();
+                this._turn(2);
                 this._move(this._direction, app.component.Bot._STEP);
             }.bind(this), 1000);
             
             break;
             
         case "app.component.Goal":
-            for(var i=0; i<5; i++) {
-                this._move(this._direction, app.component.Bot._STEP);
-            }
+            this._move(this._direction, app.component.Bot._STEP);
+            this._move(this._direction, app.component.Bot._STEP);
             break;
     }
 }
