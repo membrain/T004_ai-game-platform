@@ -6,11 +6,11 @@ app.component.sense.Touch = function() {
 
 app.component.sense.Touch.prototype = new app.component.sense.AbstractSense();
 
-app.component.sense.Touch.prototype.computeBoundingBox = function(botBox) {
-    var sb = Object.clone(botBox).resize(100);
+app.component.sense.Touch.prototype.computeBoundingBox = function(boundingBox, direction) {
+    var sb = Object.clone(boundingBox).resize(100);
     return sb;
 };
 
-app.component.sense.Touch.prototype.process = function(sprite) {
-    return true;
+app.component.sense.Touch.prototype.process = function(sprite, spriteBoundingBox, spriteDirection) {
+    return { type: sprite.klassName }
 }

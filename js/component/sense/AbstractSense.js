@@ -12,11 +12,12 @@ app.component.sense.AbstractSense.prototype.getId = function() {
 
 // Returns the bounding-box of the sense.  This will be a resized version of the
 // sensing bot's bounding-box.
-app.component.sense.AbstractSense.prototype.computeBoundingBox = function(boundingBox) {
+app.component.sense.AbstractSense.prototype.computeBoundingBox = function(boundingBox, direction) {
     throw new Error("Method Not Implemented.");
 };
 
-// Sprites are all sprites that have intersected the sense's bounding box
-app.component.sense.AbstractSense.prototype.process = function(sprite) {
+// The bounding box is the sensed bot's bounding box, and the direction is its
+// direction.
+app.component.sense.AbstractSense.prototype.process = function(sprite, spriteBoundingBox, spriteDirection) {
     throw new Error("Method Not Implemented.");
 };

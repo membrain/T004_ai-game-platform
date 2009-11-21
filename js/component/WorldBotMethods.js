@@ -32,7 +32,7 @@ app.component.WorldBotMethods = {
         
         // Generates the bot's sense method.
         _sense: function(world, bot, view) {
-            return function() {
+            return function(direction) {
                 
                 // get the bot's bounding box
                 var viewBox = view.getBoundingBox();
@@ -41,8 +41,9 @@ app.component.WorldBotMethods = {
                 
                 // iterate the sprites
                 for (var i=0, n=world.sprites.length; i<n ; i++) {
-                    var thatSprite  = world.sprites[i];
-                    var thatView    = world.views[i];
+                    var thatSprite      = world.sprites[i];
+                    var thatView        = world.views[i];
+                    var thatBoundingBox = thatView.getBoundingBox();
 
                     // We're interested in all bots except for the bot that just moved.
                     if (thatSprite !== bot) {
@@ -51,11 +52,11 @@ app.component.WorldBotMethods = {
                         for (var j=0, o=senses.length; j<o; j++) {
                             var sense       = senses[j];
                             var senseId     = sense.getId();
-                            var computedBox = sense.computeBoundingBox(viewBox);
+                            var computedBox = sense.computeBoundingBox(viewBox, direction);
 
-                            if (computedBox.intersects(thatView.getBoundingBox())) {
+                            if (computedBox.intersects(thatBoundingBox)) {
                                 
-                                info = sense.process(thatSprite);
+                                info = sense.process(thatSprite, thatBoundingBox, direction);
                                 
                                 if(!allInfo) {
                                     allInfo = {};

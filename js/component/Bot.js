@@ -20,6 +20,7 @@ app.component.Bot = function() {
     this.senses         = {};
     
     this._registerSense(app.component.sense.Touch, this._onTouch);
+    this._registerSense(app.component.sense.Sight, this._onSee);
 }
 
 
@@ -80,12 +81,15 @@ app.component.Bot.prototype.wake = function() {
 // private
 // ---------------------------------------------------------------------
 
+// Registers a sensor on the bot, mapping that sense to a handler function.  The
+// handler is always called within the scope of a bot.
 app.component.Bot.prototype._registerSense = function(senseClass, handlerFn) {
     var sense                           = new senseClass();
     this.senses[sense.getId()]          = sense;
     this._senseHanders[sense.getId()]   = handlerFn || function() {};
 }
 
+// Acts upon sensory input.
 app.component.Bot.prototype._act = function(sensoryInput) {
     for(var senseId in sensoryInput) {
         this._senseHanders[senseId].call(this, sensoryInput[senseId]);
@@ -96,7 +100,7 @@ app.component.Bot.prototype._act = function(sensoryInput) {
  * This function represents a single motor revolution.
  */
 app.component.Bot.prototype._think = function() {
-    var sensoryInput = this._sense();
+    var sensoryInput = this._sense(this._direction);
     
     if(sensoryInput) {
         this._act(sensoryInput);
@@ -148,4 +152,27 @@ app.component.Bot.prototype._turn = function(times) {
 app.component.Bot.prototype._onTouch = function(touchInfo) {
     this._turn(2);
     this._move(this._direction, app.component.Bot._STEP);
+}
+
+app.component.Bot.prototype._onSee = function(sightInfo) {
+    var firstSawA = sightInfo[0].klassName;
+    
+    switch(firstSawA) {
+        case "app.component.Bot":
+            this.sleep();
+
+            setTimeout(function() {
+                this.wake();
+                this._turn();
+                this._move(this._direction, app.component.Bot._STEP);
+            }.bind(this), 1000);
+            
+            break;
+            
+        case "app.component.Goal":
+            for(var i=0; i<5; i++) {
+                this._move(this._direction, app.component.Bot._STEP);
+            }
+            break;
+    }
 }
