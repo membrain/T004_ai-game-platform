@@ -16,7 +16,10 @@ app.component.Bot = function() {
     // state variables (model-specific)
     this._brain         = null;
     this._direction     = app.component.Bot.DIRECTIONS.last();
-    this.senses         = [ new app.component.sense.Touch() ];
+    this._senseHanders  = {};
+    this.senses         = {};
+    
+    this._registerSense(app.component.sense.Touch, this._onTouch);
 }
 
 
@@ -77,6 +80,18 @@ app.component.Bot.prototype.wake = function() {
 // private
 // ---------------------------------------------------------------------
 
+app.component.Bot.prototype._registerSense = function(senseClass, handlerFn) {
+    var sense                           = new senseClass();
+    this.senses[sense.getId()]          = sense;
+    this._senseHanders[sense.getId()]   = handlerFn || function() {};
+}
+
+app.component.Bot.prototype._act = function(sensoryInput) {
+    for(var senseId in sensoryInput) {
+        this._senseHanders[senseId].call(this, sensoryInput[senseId]);
+    }
+}
+
 /**
  * This function represents a single motor revolution.
  */
@@ -84,8 +99,7 @@ app.component.Bot.prototype._think = function() {
     var sensoryInput = this._sense();
     
     if(sensoryInput) {
-        this._turn(2);
-        this._move(this._direction, app.component.Bot._STEP);
+        this._act(sensoryInput);
     } else {
         this._randomizeDirection();
         var moved = this._move(this._direction, app.component.Bot._STEP);
@@ -93,6 +107,7 @@ app.component.Bot.prototype._think = function() {
             this._turn(2);
             this._move(this._direction, app.component.Bot._STEP);
         }
+        
     }
 }
 
@@ -124,4 +139,13 @@ app.component.Bot.prototype._turn = function(times) {
     
     // save new direction
     this._direction = app.component.Bot.DIRECTIONS[next];
+}
+
+// ---------------------------------------------------------------------
+// Sense Handlers
+// ---------------------------------------------------------------------
+
+app.component.Bot.prototype._onTouch = function(touchInfo) {
+    this._turn(2);
+    this._move(this._direction, app.component.Bot._STEP);
 }

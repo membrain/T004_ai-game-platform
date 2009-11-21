@@ -46,8 +46,11 @@ app.component.WorldBotMethods = {
 
                     // We're interested in all bots except for the bot that just moved.
                     if (thatSprite !== bot) {
-                        for (var j=0, o=bot.senses.length; j<o; j++) {
-                            var sense       = bot.senses[j];
+                        var senses = Object.values(bot.senses);
+                        
+                        for (var j=0, o=senses.length; j<o; j++) {
+                            var sense       = senses[j];
+                            var senseId     = sense.getId();
                             var computedBox = sense.computeBoundingBox(viewBox);
 
                             if (computedBox.intersects(thatView.getBoundingBox())) {
@@ -56,11 +59,11 @@ app.component.WorldBotMethods = {
                                 
                                 if(!allInfo) {
                                     allInfo = {};
-                                    allInfo[sense.klassName] = [info];
-                                } else if(!allInfo[sense.klassName]) {
-                                    allInfo[sense.klassName] = [info];
+                                    allInfo[senseId] = [info];
+                                } else if(!allInfo[senseId]) {
+                                    allInfo[senseId] = [info];
                                 } else {
-                                    allInfo[sense.klassName].push(info);
+                                    allInfo[senseId].push(info);
                                 }
                             }
                         }
