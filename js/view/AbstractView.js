@@ -14,7 +14,6 @@ app.view.AbstractView = function() {
 app.view.AbstractView.prototype.getElement = function() {
     if (!this._element) {
 		this._element = new Element("div", { "className": this._styleClass });
-		this._element.appendChild(document.createTextNode(this._id));
     }
     return this._element;
 }

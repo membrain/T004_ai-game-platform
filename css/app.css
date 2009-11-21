@@ -1,5 +1,5 @@
 body {
-	background:				#FFC;
+	background:				#FFF;
 	margin:					0;
 }
 
@@ -7,21 +7,27 @@ body {
 .goal {
 	margin:					0;
 	padding:				0;
-	border:					1px solid #333;
+	border:					0;
 	position:				absolute;
 	font:           		18px Verdana, Geneva, sans-serif;
 	color:          		white;
 	text-align:     		center;
-	width:					25px;
-	height:					25px;
 }
 
 .bot {
-    background:             #666;
+    background:             #FFF;
     z-index:                2;
+    width:					32px;
+	height:					36px;
+	background-image:       url(../img/evil_bot.png);
+	background-repeat:      no-repeat;
 }
 
 .goal {
 	background:				#F00;
 	z-index:                1;
+	width:					26px;
+	height:					25px;
+	background-image:       url(../img/goal.png);
+	background-repeat:      no-repeat;
 }
